@@ -149,7 +149,7 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                     {
                         `
                             body { overflow: auto !important; }
-                            #lms365 .user-photo { display: none; }
+                            #lms365 .lbUserInfo .user-photo { display: none; }
                             .k-grid .k-hierarchy-cell { padding: 0 0 0 0.6em; }
                             #lms365 .courseCertificateDownload a { cursor: default; }
                             #lms365 .courseCertificateDownload .course-icon-text { display: none; }
