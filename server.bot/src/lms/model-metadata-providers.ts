@@ -1,10 +1,10 @@
 import { Course, CourseSession, CourseType } from './models';
 import { ResourceSet } from './resource-set';
 import { ModelFilterFactory } from './model-filters';
-import { DateFormat, Formatter } from './formatter';
-import { ArrayHelper } from './helpers/array-helper';
 import { CommonHelper } from './helpers/common-helper';
-import { DateTimeHelper } from './helpers/date-time-helper';
+import { DateFormat, Formatter } from '../common/formatter';
+import { ArrayHelper } from '../common/helpers/array-helper';
+import { DateTimeHelper } from '../common/helpers/date-time-helper';
 
 const courseFields = CommonHelper.Fields.Course;
 const courseSessionFields = CommonHelper.Fields.CourseSession;

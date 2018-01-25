@@ -1,7 +1,7 @@
 import { ModelFilterFactory } from './model-filters';
 import { Course, CourseType, User, CourseCategory, CourseSession, CourseCatalog } from './models';
-import { EnumHelper } from './helpers/enum-helper';
-import { Formatter } from './formatter';
+import { EnumHelper } from '../common/helpers/enum-helper';
+import { Formatter } from '../common/formatter';
 
 export class ModelCreator {
     private _formatter: Formatter;
@@ -55,6 +55,7 @@ export class ModelCreator {
     public createCourseCategory(source: any): CourseCategory {
         return source
             ? {
+                courses: source.Courses ? source.Courses.map(x => this.createCourse(x)) : null,
                 id: source.Id,
                 name: source.Name
             }

@@ -1,5 +1,5 @@
 import { Message, Session, EntityRecognizer } from 'botbuilder';
-import { ActionDefinition } from './action';
+import { Action } from './action-definition';
 import { LmsContext } from '../lms-context';
 import { CourseCatalog } from '../models';
 import { ResourceSet } from '../resource-set';
@@ -7,8 +7,8 @@ import { CommonHelper } from '../helpers/common-helper';
 
 const resourceSet = ResourceSet.instance;
 
-export const SelectCourseCatalog: ActionDefinition = {
-    action: (session: Session, lmsContext: LmsContext, args: any) => {
+export class SelectCourseCatalogAction implements Action {
+    public handle(session: Session, lmsContext: LmsContext, args: any) {
         const urlEntity = EntityRecognizer.findEntity(args.intent.entities, 'builtin.url');
         const message = lmsContext.message;
 
@@ -30,8 +30,5 @@ export const SelectCourseCatalog: ActionDefinition = {
         }
 
         session.endDialog();
-    },
-    key: 'SelectCourseCatalog',
-    title: 'Select Course Catalog',
-    titleFormat: (courseCatalog: CourseCatalog) => `Select Course Catalog by ${encodeURI(courseCatalog.url)}`
+    }
 };

@@ -3,10 +3,14 @@ import { LmsContext } from '../lms-context';
 import { LmsContextProvider } from '../lms-context-provider';
 
 export interface ActionDefinition {
-    action: (session: Session, lmsContext: LmsContext, args?: any, next?: any) => void; 
+    action: Action;
     key: string;
     title: string;
     titleFormat?: (...args: any[]) => string;
+}
+
+export interface Action {
+    handle(session: Session, lmsContext: LmsContext, args?: any, next?: any);
 }
 
 export const wrapAction = (actionDefinition: ActionDefinition) =>
@@ -15,5 +19,5 @@ export const wrapAction = (actionDefinition: ActionDefinition) =>
 
         const lmsContext = await LmsContextProvider.instance.get(session);
 
-        actionDefinition.action(session, lmsContext, args, next);
+        actionDefinition.action.handle(session, lmsContext, args, next);
     };

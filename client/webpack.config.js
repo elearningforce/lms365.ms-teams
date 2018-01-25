@@ -12,7 +12,10 @@ module.exports = function (environment) {
     return {
         context: path.resolve(__dirname, '.'),
         entry: {
-            'client': ['./src/index']
+            'client': [
+                'es6-shim',
+                './src/index'
+            ]
         },
         externals: [
             (context, request, callback) => {

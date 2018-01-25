@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { Context, ThemeStyle, TeamsComponentContext, ConnectedComponent, Panel, PanelBody } from 'msteams-ui-components-react';
+import { Context, ThemeStyle, TeamsComponentContext, ConnectedComponent, Panel, PanelBody, Surface } from 'msteams-ui-components-react';
 import { AuthenticationConfig } from 'ef.lms365';
 import { LoginButton } from './login-button';
+import { EnvironmentConfigProvider } from '../infrastructure/environment-config-provider';
 import { Helper } from '../infrastructure/helper';
 
 enum UserAuthenticationStatus {
+    AccessDenied,
     Authenticated,
     NotAuthenticated,
     Undefined
@@ -58,11 +60,21 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
 
         const authenticationContext = new AuthenticationContext(config);
 
-        authenticationContext.acquireToken(authenticationConfig.resourceId, (error, token) => {
+        authenticationContext.acquireToken(authenticationConfig.resourceId, async (error, token) => {
             if (error || !token) {
                 this.setState({ userAuthenticationStatus: UserAuthenticationStatus.NotAuthenticated });
             } else {
-                this.onAuthenticated(token);
+                const cachedUser = authenticationContext.getCachedUser();
+
+                try {
+                    const environmentConfig = await EnvironmentConfigProvider.instance.getById(cachedUser.profile.tid);
+
+                    if (environmentConfig != null) {
+                        this.onAuthenticated(token);
+                    }
+                } catch (error) {
+                    this.setState({ userAuthenticationStatus: UserAuthenticationStatus.AccessDenied });
+                }
             }
         });
 
@@ -77,19 +89,19 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
         }
     }
 
-    protected getRedirectViewUrl(configJson: string):string {
+    protected getRedirectViewUrl(configJson: string): string {
         const config = JSON.parse(configJson);
         const viewName = config.view;
         const webUrl = config.webUrl;
 
         switch (viewName) {
             case 'dashboard':
-                return 'Dashboard';                
+                return 'Dashboard';
             case 'course-catalog':
-                return 'CourseCatalog?webUrl=' + encodeURIComponent(webUrl);                
+                return 'CourseCatalog?webUrl=' + encodeURIComponent(webUrl);
             case 'course':
-                return 'Course?webUrl=' + encodeURIComponent(webUrl);                
-        }        
+                return 'Course?webUrl=' + encodeURIComponent(webUrl);
+        }
     }
 
     private onAuthenticated(token:string){
@@ -113,6 +125,11 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
         let content: (contenxt: Context) => JSX.Element = null;
 
         switch (this.state.userAuthenticationStatus) {
+            case UserAuthenticationStatus.AccessDenied:
+                content = x => (
+                    <Surface>Doh, it would appear you do not have LMS365 installed on your Office 365 Tenant! Please visit our <a href="https://www.elearningforce.com/teams" target="_blank">website</a> on how to get LMS365 for your organisation.</Surface>
+                );
+                break;
             case UserAuthenticationStatus.Authenticated:
                 content = x => this.renderContent(x);
                 break;
@@ -127,13 +144,13 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                     {
                         `
                             body { overflow: auto !important; }
-                            .--efLms365Dashboard #lms365 .lbUserInfo .user-photo { display: none; }
-                            .--efLms365Dashboard .k-grid .k-hierarchy-cell { padding: 0 0 0 0.6em; }
-                            .--efLms365Dashboard #lms365 .courseCertificateDownload a { cursor:default; }
-                            .--efLms365Dashboard #lms365 .courseCertificateDownload .course-icon-text { display:none; }
-                            .--efLms365Dashboard #lms365 .lCoursesCertificate a { cursor:default; }
-                            .--efLms365Course-page .course-certificate a { display:none; }
-                            .course-management-button { display:none; }
+                            #lms365 .user-photo { display: none; }
+                            .k-grid .k-hierarchy-cell { padding: 0 0 0 0.6em; }
+                            #lms365 .courseCertificateDownload a { cursor: default; }
+                            #lms365 .courseCertificateDownload .course-icon-text { display: none; }
+                            #lms365 .lCoursesCertificate a { cursor: default; }
+                            .course-certificate a { display: none; }
+                            .course-management-button { display: none; }
                         `
                     }
                 </style>
@@ -144,14 +161,14 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                                 <ConnectedComponent render={(props) => {
                                     return (
                                         this.allowRenderPanel
-                                        ? (
-                                            <Panel>
-                                                <PanelBody>
-                                                    {content(props.context)}
-                                                </PanelBody>
-                                            </Panel>
-                                        )
-                                        : content(props.context)
+                                            ? (
+                                                <Panel>
+                                                    <PanelBody>
+                                                        {content(props.context)}
+                                                    </PanelBody>
+                                                </Panel>
+                                            )
+                                            : content(props.context)
                                     );
                                 }} />
                             </TeamsComponentContext>

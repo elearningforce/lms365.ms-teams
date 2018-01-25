@@ -1,11 +1,11 @@
 import { AttachmentLayout, Message, Session, EntityRecognizer, IIsAttachment } from 'botbuilder';
-import { ActionDefinition } from './action';
+import { Action } from './action-definition';
 import { LmsContext } from '../lms-context';
 import { Course, CourseCatalog } from '../models';
-import { ArrayHelper } from '../helpers/array-helper';
+import { ArrayHelper } from '../../common/helpers/array-helper';
 
-export const ShowCourseCatalogList: ActionDefinition = {
-    action: (session: Session, lmsContext: LmsContext, args: any) => {
+export class ShowCourseCatalogListAction implements Action {
+    public handle(session: Session, lmsContext: LmsContext, args: any) {
         lmsContext.modelStorages.courseCatalogs.getAll()
             .then(courseCatalogs => {
                 const chunks = ArrayHelper.split<CourseCatalog>(courseCatalogs, 10);
@@ -30,7 +30,5 @@ export const ShowCourseCatalogList: ActionDefinition = {
 
                 session.endDialog();
             });
-    },
-    key: 'ShowCourseCatalogList',
-    title: 'Show Course Catalogs'
+    }
 };
