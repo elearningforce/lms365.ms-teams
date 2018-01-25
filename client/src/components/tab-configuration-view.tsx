@@ -13,6 +13,7 @@ export interface TabConfigurationState {
     url?: string;
     viewType?: ViewType;
     name?: string;
+    renderNameInput: boolean;
 }
 
 const viewPropsByViewType = {
@@ -28,11 +29,25 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         this.state = {
             theme: ThemeStyle.Light,
             viewType: ViewType.Dashboard,
+<<<<<<< HEAD
             name: 'Dashboard'
+=======
+            name: 'Dashboard',
+            renderNameInput: false    
+>>>>>>> be526edb2966e962872a8aa3e1ecb3224abd6a18
         };
     }
 
-    private renderInputSection(styles: any): JSX.Element[] {
+    private renderNameInputSection(styles: any): JSX.Element[] {
+        if (this.state.renderNameInput) {
+            return [
+                <div style={styles.section}>Tab name:</div>,
+                <Input onChange={x => this.setState({ name: x.target.value })} placeholder="Tab name" style={styles.input} value={this.state.name} />
+            ];
+        }
+    }
+
+    private renderUrlInputSection(styles: any): JSX.Element[] {
         return this.state.viewType != ViewType.Dashboard
             ? [
                 <div style={styles.section}>Site url:</div>,
@@ -72,7 +87,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
             const tabName = this.state.name;
             let webUrl = this.state.url;
 
-            if (((viewType != ViewType.Dashboard) && !webUrl) || !tabName) {
+            if (((viewType != ViewType.Dashboard) && !webUrl) || (this.state.renderNameInput && !tabName)) {
                 saveEvent.notifyFailure();
             } else {
                 webUrl = this.trimUrl(webUrl);
@@ -90,6 +105,15 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
             }
 
             saveEvent.notifySuccess();
+<<<<<<< HEAD
+=======
+        });  
+        
+        microsoftTeams.settings.getSettings(settings => {
+            if (!settings || !settings.entityId) {
+                this.setState({ renderNameInput: true });
+            }
+>>>>>>> be526edb2966e962872a8aa3e1ecb3224abd6a18
         });
     }
 
@@ -110,8 +134,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
 
         return (
             <Surface style={styles.surface}>
-                <div style={styles.section}>Tab name:</div>
-                <Input onChange={x => this.setState({ name: x.target.value })} placeholder="Tab name" style={styles.input} value={this.state.name} />
+                {this.renderNameInputSection(styles)}
 
                 <div style={styles.section}>View:</div>
                 <RadiobuttonGroup>
@@ -120,7 +143,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
                     {this.renderRadioButton(ViewType.Course)}
                 </RadiobuttonGroup>
 
-                {this.renderInputSection(styles)}
+                {this.renderUrlInputSection(styles)}
             </Surface>
         );
     }
@@ -156,7 +179,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         const microsoftTeams = (window as any).microsoftTeams;
         if (microsoftTeams) {
             let valid = true;
-            if (!this.state.name) {
+            if (this.state.renderNameInput && !this.state.name) {
                 valid = false;
             }
             if (this.state.viewType != ViewType.Dashboard && (!this.state.url || this.state.url == 'https://' || !this.validateUrlFormat(this.state.url))) {
