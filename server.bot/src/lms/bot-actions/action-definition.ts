@@ -1,6 +1,9 @@
 import { Session } from 'botbuilder';
 import { LmsContext } from '../lms-context';
 import { LmsContextProvider } from '../lms-context-provider';
+import { ResourceSet } from '../resource-set';
+
+const resourceSet = ResourceSet.instance;
 
 export interface ActionDefinition {
     action: Action;
@@ -17,7 +20,11 @@ export const wrapAction = (actionDefinition: ActionDefinition) =>
     async (session: Session, args: any, next: any) => {
         session.sendTyping();
 
-        const lmsContext = await LmsContextProvider.instance.get(session);
+        try {
+            const lmsContext = await LmsContextProvider.instance.get(session);
 
-        actionDefinition.action.handle(session, lmsContext, args, next);
+            actionDefinition.action.handle(session, lmsContext, args, next);
+        } catch {
+            session.send(resourceSet.TenantNotAccessible);
+        }
     };

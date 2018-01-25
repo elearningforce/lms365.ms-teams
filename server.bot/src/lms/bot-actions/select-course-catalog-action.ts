@@ -8,23 +8,23 @@ import { CommonHelper } from '../helpers/common-helper';
 const resourceSet = ResourceSet.instance;
 
 export class SelectCourseCatalogAction implements Action {
-    public handle(session: Session, lmsContext: LmsContext, args: any) {
+    public async handle(session: Session, lmsContext: LmsContext, args: any) {
         const urlEntity = EntityRecognizer.findEntity(args.intent.entities, 'builtin.url');
         const message = lmsContext.message;
 
         if (urlEntity) {
             const url = decodeURI((urlEntity as any).entity);
+            const courseCatalog = await lmsContext.modelStorages.courseCatalogs.getByUrl(url);
 
-            lmsContext.modelStorages.courseCatalogs.getByUrl(url)
-                .then(courseCatalog => {
-                    if (courseCatalog) {
-                        lmsContext.userStorage.set(CommonHelper.Keys.CourseCatalog, courseCatalog);
-                        
-                        session.send(resourceSet.CourseCatalogList_WasSelected(courseCatalog.url));
-                    } else {
-                        session.send(resourceSet.CourseCatalogList_NotFound);
-                    }
-                });
+            if (courseCatalog) {
+                const attachment = lmsContext.attachmentBuilders.greeting.buildShortMode(resourceSet.CourseCatalogList_WasSelected(courseCatalog.url));
+
+                lmsContext.userStorage.set(CommonHelper.Keys.CourseCatalog, courseCatalog);
+                
+                session.send(new Message(session).addAttachment(attachment));
+            } else {
+                session.send(resourceSet.CourseCatalogList_NotFound);
+            }
         } else {
             session.send(resourceSet.CourseCatalogList_EmptyUrl);
         }

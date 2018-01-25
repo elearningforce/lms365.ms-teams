@@ -1,4 +1,4 @@
-import { CardAction, CardImage, IAttachment, IIsAttachment, Message, Session, ThumbnailCard, HeroCard } from 'botbuilder';
+import { CardAction, CardImage, IAttachment, IIsAttachment, ICardAction, IIsCardAction, Message, Session, ThumbnailCard, HeroCard } from 'botbuilder';
 import { AppInfo, AppType } from 'ef.lms365';
 import { ActionDefinitionList } from './bot-actions/action-definition-list';
 import { LmsContext } from './lms-context';
@@ -153,26 +153,38 @@ export class GreetingAttachmentBuilder {
         this._lmsContext = lmsContext;
     }
 
-    public build(): IAttachment | IIsAttachment {
-        const lmsContext = this._lmsContext;
-        const session = lmsContext.session;
-        const user = session.message.user;
+    private createButtons(session: Session): ICardAction[] | IIsCardAction[] {
         const messageBuilder = (courseType: CourseType) =>
             (courseType != CourseType.TrainingPlan)
                 ? `Show ${CommonHelper.escape(resourceSet.getCourseTypeName(courseType))} Courses`
                 : `Show ${resourceSet.TrainingPlans}`;
 
+        return [
+            CardAction.imBack(session, ActionDefinitionList.ShowCourseCatalogList.title, ActionDefinitionList.ShowCourseCatalogList.title),
+            CardAction.imBack(session, messageBuilder(CourseType.ELearning), messageBuilder(CourseType.ELearning)),
+            CardAction.imBack(session, messageBuilder(CourseType.Webinar), messageBuilder(CourseType.Webinar)),
+            CardAction.imBack(session, messageBuilder(CourseType.TrainingPlan), messageBuilder(CourseType.TrainingPlan)),
+            CardAction.imBack(session, CommonHelper.escape(messageBuilder(CourseType.ClassRoom)), messageBuilder(CourseType.ClassRoom)),
+            CardAction.imBack(session, ActionDefinitionList.ShowCourseCategoryList.title, ActionDefinitionList.ShowCourseCategoryList.title)
+        ];
+    }
+
+    public build(): IAttachment | IIsAttachment {
+        const session = this._lmsContext.session;
+        const user = session.message.user;
+
         return new ThumbnailCard(session)
             .title(resourceSet.Greeting_Title(user.name))
             .text(resourceSet.Greeting)
-            .buttons([
-                CardAction.imBack(session, ActionDefinitionList.ShowCourseCatalogList.title, ActionDefinitionList.ShowCourseCatalogList.title),
-                CardAction.imBack(session, messageBuilder(CourseType.ELearning), messageBuilder(CourseType.ELearning)),
-                CardAction.imBack(session, messageBuilder(CourseType.Webinar), messageBuilder(CourseType.Webinar)),
-                CardAction.imBack(session, messageBuilder(CourseType.TrainingPlan), messageBuilder(CourseType.TrainingPlan)),
-                CardAction.imBack(session, CommonHelper.escape(messageBuilder(CourseType.ClassRoom)), messageBuilder(CourseType.ClassRoom)),
-                CardAction.imBack(session, ActionDefinitionList.ShowCourseCategoryList.title, ActionDefinitionList.ShowCourseCategoryList.title)
-            ]);
+            .buttons(this.createButtons(session));
+    }
+
+    public buildShortMode(content: string): IAttachment | IIsAttachment {
+        const session = this._lmsContext.session;
+
+        return new ThumbnailCard(session)
+            .subtitle(content)
+            .buttons(this.createButtons(session));
     }
 }
 

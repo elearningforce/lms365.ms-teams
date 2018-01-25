@@ -21,11 +21,11 @@ export class ResourceSet {
     }
 
     public get CourseCatalogList_EmptyUrl(): string {
-        return 'You need to use url of Course Catalog.';
+        return 'You need to provide a url to the Course Catalog.';
     }
 
     public get CourseCatalogList_NotFound(): string {
-        return 'Aw shucks, I could not find that Course Catalog, perhaps you misspelled it? To see all Course Catalogs just ask me to show the course catalog list .';
+        return 'Aw shucks, I could not find that Course Catalog, perhaps you misspelled it? To see all Course Catalogs just ask me to show the course catalog list.';
     }
 
     public CourseCatalogList_WasSelected(url: string): string {
@@ -127,6 +127,10 @@ Just click any of the buttons below or simply type ‘show elearning’ to get a
 
     public get Reports_StartDate(): string {
         return 'Start Date';
+    }
+
+    public get TenantNotAccessible(): string {
+        return 'Doh, it would appear you do not have LMS365 installed on your Office 365 Tenant! Please visit our <a href="https://www.elearningforce.com/teams" target="_blank">website</a> on how to get LMS365 for your organisation.';
     }
 
     public get Type_Section_Title(): string {
