@@ -28,20 +28,20 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         this.state = {
             theme: ThemeStyle.Light,
             viewType: ViewType.Dashboard,
-            name: 'Dashboard'       
+            name: 'Dashboard'
         };
     }
 
     private renderInputSection(styles: any): JSX.Element[] {
         return this.state.viewType != ViewType.Dashboard
-             ? [
+            ? [
                 <div style={styles.section}>Site url:</div>,
-                this.validateUrlFormat(this.state.url) ? null: <div style={styles.error}>That isn't a valid URL.</div>,
+                this.validateUrlFormat(this.state.url) ? null : <div style={styles.error}>That isn't a valid URL.</div>,
                 <Input onChange={x => this.setState({ url: x.target.value })}
                     placeholder="Site url"
                     style={styles.input}
-                    value={this.state.url}                    
-                />,                
+                    value={this.state.url}
+                />,
             ]
             : null;
     }
@@ -68,7 +68,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         const microsoftTeams = (window as any).microsoftTeams;
 
         microsoftTeams.settings.registerOnSaveHandler((saveEvent) => {
-            const viewType = this.state.viewType;            
+            const viewType = this.state.viewType;
             const tabName = this.state.name;
             let webUrl = this.state.url;
 
@@ -85,22 +85,22 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
                 microsoftTeams.settings.setSettings({
                     entityId: `lms365${viewProps.key}${encodeURIComponent(webUrl)}`,
                     contentUrl: `${document.location.origin}/Tab?view=${viewProps.key}&${queryParams}`,
-                    suggestedDisplayName: tabName                    
+                    suggestedDisplayName: tabName
                 });
             }
 
             saveEvent.notifySuccess();
-        });        
+        });
     }
 
     protected renderContent(context: Context): JSX.Element {
         const { rem, font } = context;
         const { sizes } = font;
         const styles = {
-            section: {...sizes.title2, marginTop: rem(1.4), marginBottom: rem(1.4)},
+            section: { ...sizes.title2, marginTop: rem(1.4), marginBottom: rem(1.4) },
             input: {
                 paddingLeft: rem(0.5),
-                paddingRight: rem(0.5)                
+                paddingRight: rem(0.5)
             },
             surface: { backgroundColor: 'transparent' },
             error: { ...sizes.caption, color: 'red' }
@@ -141,7 +141,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         }
         value = this.trimEnd(value, '/SitePages/');
         value = this.trimEnd(value, '/');
-        
+
         return value;
     }
 

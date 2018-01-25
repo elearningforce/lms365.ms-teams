@@ -13,6 +13,7 @@
     "@types/react": "^16.0.34",
     "@types/react-dom": "^16.0.3",
     "ef.lms365": "^1.0.5",
+    "es6-shim": "^0.35.3",
     "jquery": "^3.2.1",
     "msteams-ui-components-react": "^0.3.7",
     "msteams-ui-icons-react": "^0.2.1",
