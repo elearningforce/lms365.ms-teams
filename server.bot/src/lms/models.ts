@@ -22,6 +22,7 @@ export interface CourseCatalog {
 }
 
 export interface CourseCategory {
+    courses?: Course[];
     id: string;
     name: string;
 }

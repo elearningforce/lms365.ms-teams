@@ -6,8 +6,8 @@ import { ShowCourseCategoryList } from './bot-actions/show-course-category-list'
 import { LmsContext } from './lms-context';
 import { Course, CourseCatalog, CourseType, CourseCategory } from './models';
 import { DeepLinkBuilder } from './deep-link-builder';
-import { CommonHelper } from './helpers/common-helper';
 import { ResourceSet } from './resource-set';
+import { CommonHelper } from './helpers/common-helper';
 
 const courseFields = CommonHelper.Fields.Course;
 const resourceSet = ResourceSet.instance;
@@ -118,7 +118,7 @@ export class CourseCategoryAttachmentBuilder {
         this._lmsContext = lmsContext;
     }
 
-    public buildListWithCourseTypeFilter(queryableCourseType: CourseType, categories: CourseCategory[]): IIsAttachment {
+    public buildListWithCourseTypeFilter(title: string, queryableCourseType: CourseType, categories: CourseCategory[]): IIsAttachment {
         const lmsContext = this._lmsContext;
         const session = lmsContext.session;
         const messageBuilder = (category: CourseCategory) => (queryableCourseType != null)
@@ -127,23 +127,23 @@ export class CourseCategoryAttachmentBuilder {
         const buttons = categories.map(x => {
             const message = messageBuilder(x);
 
-            return CardAction.imBack(session, message, x.name);
+            return CardAction.imBack(session, message, `${x.name} (${x.courses.length})`);
         });
 
         return new ThumbnailCard(session)
-            .title(resourceSet.MoreThanPageCourseCount)
+            .title(title)
             .buttons(buttons);
     }
 
-    public buildList(categories: CourseCategory[]): IIsAttachment {
+    public buildList(title: string, categories: CourseCategory[]): IIsAttachment {
         const lmsContext = this._lmsContext;
         const session = lmsContext.session;
         const buttons = categories.map(x => {
-            return CardAction.imBack(session, `Show Courses with ${x.name} category`, x.name);
+            return CardAction.imBack(session, `Show Courses with ${x.name} category`, `${x.name} (${x.courses.length})`);
         });
 
         return new ThumbnailCard(session)
-            .title(resourceSet.CourseCategoryList_Title)
+            .title(title)
             .buttons(buttons);
     }
 }

@@ -86,9 +86,11 @@ export class ResourceSet {
 
     public get Greeting(): string {
         return `
-My name is Elle, I am your Learning Assistant BOT and will try and find the training you might like! 
+I am your Learning Assistant BOT and will try and find the training you might like! 
+</br>
 </br>
 I can help you:
+</br>
 </br>
 <ul>
     <li>Select your default Course Catalog</li>

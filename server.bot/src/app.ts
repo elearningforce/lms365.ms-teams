@@ -34,14 +34,6 @@ bot.dialog(SelectCourseCatalog.key, wrapAction(SelectCourseCatalog)).triggerActi
 bot.dialog(ShowCourseCatalogList.key, wrapAction(ShowCourseCatalogList)).triggerAction({ matches: ShowCourseCatalogList.key });
 bot.dialog(ShowCourseCategoryList.key, wrapAction(ShowCourseCategoryList)).triggerAction({ matches: ShowCourseCategoryList.key });
 
-bot.dialog('adhocDialog', async (session, args) => {
-    const lmsContext = await LmsContextProvider.instance.get(session);
-    const attachment = lmsContext.attachmentBuilders.greeting.build();
-    const message = new Message(session).addAttachment(attachment);
-
-    session.send(message);
-});
-
 connector.onQuery('searchCmd', (message: IMessage, query, callback) => {
     bot.loadSession(message.address, async (error, session: Session) => {
         const searchKeyword = (query.parameters[0].name == 'searchKeyword') ? query.parameters[0].value : null;

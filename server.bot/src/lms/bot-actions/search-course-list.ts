@@ -3,7 +3,9 @@ import { ActionDefinition } from './action';
 import { LmsContext } from '../lms-context';
 import { Course, CourseCategory, CourseType } from '../models';
 import { ResourceSet } from '../resource-set';
-import { ArrayHelper } from '../helpers/array-helper';
+import { SortDirection } from '../../common/common';
+import { Comparer } from '../../common/comparer';
+import { ArrayHelper } from '../../common/helpers/array-helper';
 
 const resourceSet = ResourceSet.instance;
 
@@ -23,19 +25,38 @@ function getCourseType(value: string): CourseType {
 export class SearchCourseListActionHandler {
     public static readonly instance: SearchCourseListActionHandler = new SearchCourseListActionHandler();
 
-    private sendMessageAboutCategories(session: Session, lmsContext: LmsContext, queryableCourseType: CourseType, courses: Course[]) {
-        const allCategories = ArrayHelper.selectMany(courses, x => x.categories);
-        const uniqueCategories = ArrayHelper.groupBy<CourseCategory>(allCategories, x => x.id).map(x => x.values[0]);
-        const message = new Message(session)
-            .addAttachment(lmsContext.attachmentBuilders.courseCategories.buildListWithCourseTypeFilter(queryableCourseType, uniqueCategories));
+    private static attachCoursesToCategories(categories: CourseCategory[], courses: Course[]) {
+        for (let category of categories) {
+            const coursesByCategory = courses.filter(x => x.categories.find(y => y.id == category.id));
 
-        session.send(message);
+            category.courses = coursesByCategory;
+        }
+    }
+
+    private sendMessageAboutCategories(session: Session, lmsContext: LmsContext, queryableCourseType: CourseType, courses: Course[]) {
+        const allCourseCategories = ArrayHelper.selectMany(courses, x => x.categories);
+        const uniqueCourseCategories = ArrayHelper.groupBy<CourseCategory>(allCourseCategories, x => x.id).map(x => x.values[0]);
+        const comparer = (x, y) => Comparer.instance.compare(x.courses.length, y.courses.length, SortDirection.Descending);
+
+        SearchCourseListActionHandler.attachCoursesToCategories(uniqueCourseCategories, courses);
+
+        const courseCategoryChunks = ArrayHelper.split(uniqueCourseCategories.sort(comparer), 6);
+
+        for (let i = 0; i < courseCategoryChunks.length; i++) {
+            const message = new Message(session);
+            const attachment = lmsContext.attachmentBuilders.courseCategories
+                .buildListWithCourseTypeFilter(i == 0 ? resourceSet.MoreThanPageCourseCount : null, queryableCourseType, courseCategoryChunks[i]);
+
+            message.addAttachment(attachment);
+
+            session.send(message);
+        }
     }
 
     private sendMessageAboutCourses(session: Session, lmsContext: LmsContext, queryableCourseType: CourseType, queryableCategoryName: string, courses: Course[]) {
         if (courses.length) {
             const attachments: IIsAttachment[] = [];
-            const pagedCourses = courses.slice(0, 10);
+            const pagedCourses = courses.sort((x, y) => Comparer.instance.compare(x.title, y.title, SortDirection.Descending)).slice(0, 10);
 
             for (let i = 0; i < pagedCourses.length; i++) {
                 const course = pagedCourses[i];
@@ -66,7 +87,6 @@ export class SearchCourseListActionHandler {
             ? getCourseType((courseTypeEntity as any).resolution.values[0])
             : null;
         let promise: Promise<Course[]>;
-
 
         if (courseType && categoryName) {
             promise = lmsContext.modelStorages.courses.getByTypeAndCategoryName(courseType, categoryName);

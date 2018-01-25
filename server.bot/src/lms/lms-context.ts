@@ -9,7 +9,7 @@ import { CourseCatalog } from './models';
 import { QueryExecuter } from './query-executer';
 import { UserStorage } from './user-storage';
 import { CommonHelper } from './helpers/common-helper';
-import { Formatter } from './formatter';
+import { Formatter } from '../common/formatter';
 
 interface LmsContextProps {
     environmentConfig: EnvironmentConfig;

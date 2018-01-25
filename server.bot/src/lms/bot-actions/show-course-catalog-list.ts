@@ -2,7 +2,7 @@ import { AttachmentLayout, Message, Session, EntityRecognizer, IIsAttachment } f
 import { ActionDefinition } from './action';
 import { LmsContext } from '../lms-context';
 import { Course, CourseCatalog } from '../models';
-import { ArrayHelper } from '../helpers/array-helper';
+import { ArrayHelper } from '../../common/helpers/array-helper';
 
 export const ShowCourseCatalogList: ActionDefinition = {
     action: (session: Session, lmsContext: LmsContext, args: any) => {

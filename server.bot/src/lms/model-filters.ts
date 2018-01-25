@@ -1,5 +1,5 @@
 import { CourseSession } from './models';
-import { DateTimeHelper } from './helpers/date-time-helper';
+import { DateTimeHelper } from '../common/helpers/date-time-helper';
 
 export type ModelFilterExpression<T> = (x: T[]) => T[];
 

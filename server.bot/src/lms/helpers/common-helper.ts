@@ -81,9 +81,9 @@ export class CommonHelper {
         },
         CourseCategory: {
             getAll: (courseCatalogId: string) => {
-                const courseCatalogIdFilter = courseCatalogId ? `?$filter=CourseCatalogId eq ${encodeURIComponent(courseCatalogId)}` : '';
+                const courseCatalogIdFilter = courseCatalogId ? `CourseCatalogId eq ${encodeURIComponent(courseCatalogId)} and ` : '';
 
-                return `odata/v2/CourseCategories${courseCatalogIdFilter}`;
+                return `odata/v2/CourseCategories?$expand=Courses($select=Id)&$filter=${courseCatalogIdFilter}Courses/any(x:x/IsPublished eq true and x/ShowInCatalog eq true)`;
             }
         }
     }
