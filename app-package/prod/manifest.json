@@ -1,4 +1,4 @@
-﻿{
+{
     "$schema": "https://statics.teams.microsoft.com/sdk/v1.2/manifest/MicrosoftTeams.schema.json",
     "manifestVersion": "1.2",
     "id": "d136f17e-df84-47f2-97a4-13aa24c0c647",
@@ -15,8 +15,8 @@
         "full": "LMS365 | Learning Management for the Modern Digital Workplace!"
     },
     "description": {
-        "full": "LMS365 for Microsoft Teams enables learners to find, take and track their Training directly inside Teams as well as using our Intelligent BOT 'Elle' to look for Training Courses and Training Plans available in the catalog.",
-        "short": "Easily insert your LMS365 Training into your channels and chats"
+        "full": "Enable your learners to find, take and track their LMS365 Training directly inside Teams as well as using our Intelligent BOT to help finding Courses and Training Plans available in your catalogs.",
+        "short": "Easily insert and share your LMS365 Training in channels and chats"
     },
     "icons": {
         "outline": "lms365-teams-outline-icon-20x20px.png",
@@ -80,12 +80,12 @@
             "commands": [
                 {
                     "id": "searchCmd",
-                    "title": "Search",
-                    "description": "Search for training",
+                    "title": "Search course catalog",
+                    "description": "Search the course catalog for courses and training plans",
                     "initialRun": true,
                     "parameters": [{
                         "name": "searchKeyword",
-                        "description": "Enter your search keywords",
+                        "description": "Enter a search term",
                         "title": "Keywords"
                     }]
                 }
