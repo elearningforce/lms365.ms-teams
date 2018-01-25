@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Context, Input, Radiobutton, RadiobuttonGroup, ThemeStyle, Surface } from 'msteams-ui-components-react';
 import { View } from './view';
-import { GlobalConfig } from 'ef.lms365';
+import { EnvironmentConfigProvider } from '../infrastructure/environment-config-provider';
 import * as $ from 'jquery';
 
 enum ViewType {
@@ -205,8 +205,8 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         if (this.state.viewType == ViewType.Dashboard) {
             return true;
         }
-        
-        const requestUrl = `https://${GlobalConfig.instance.apiHost}/odata/v2/Courses?$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${encodeURIComponent(url)}'`;        
+        const environmentConfig = await EnvironmentConfigProvider.instance.getById(this.tenantId);
+        const requestUrl = `${environmentConfig.apiUrl}/odata/v2/Courses?$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${encodeURIComponent(url)}'`;        
         return await $.ajax(
             {
                 url: requestUrl,

@@ -30,7 +30,10 @@ export class SignInView extends React.Component {
                                 microsoftTeams.authentication.notifyFailure(error);
                             }
                         } else {
-                            microsoftTeams.authentication.notifySuccess(token);
+                            microsoftTeams.authentication.notifySuccess({
+                                accessToken: token,
+                                tenantId: authenticationContext.getCachedUser().profile.tid
+                            });
                         }
                     });
                 }

@@ -25,6 +25,7 @@ const themeByName = {
 
 export class View<P = any, S extends ViewState = ViewState> extends React.Component<P, S> {
     private _accessToken: string;
+    private _tenantId: string;
 
     public constructor(props: any) {
         super(props);
@@ -65,16 +66,7 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                 this.setState({ userAuthenticationStatus: UserAuthenticationStatus.NotAuthenticated });
             } else {
                 const cachedUser = authenticationContext.getCachedUser();
-
-                try {
-                    const environmentConfig = await EnvironmentConfigProvider.instance.getById(cachedUser.profile.tid);
-
-                    if (environmentConfig != null) {
-                        this.onAuthenticated(token);
-                    }
-                } catch (error) {
-                    this.setState({ userAuthenticationStatus: UserAuthenticationStatus.AccessDenied });
-                }
+                this.onAuthenticated(token, cachedUser.profile.tid);                
             }
         });
 
@@ -104,17 +96,30 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
         }
     }
 
-    private onAuthenticated(token:string){
+    private async onAuthenticated(token: string, tenantId: string) {
+        this._tenantId = tenantId;
         this._accessToken = token;
-        this.setState({ userAuthenticationStatus: UserAuthenticationStatus.Authenticated });
+        try {
+            const environmentConfig = await EnvironmentConfigProvider.instance.getById(this._tenantId);
+
+            if (environmentConfig != null) {
+                this.setState({ userAuthenticationStatus: UserAuthenticationStatus.Authenticated });
+            }
+        } catch (error) {
+            this.setState({ userAuthenticationStatus: UserAuthenticationStatus.AccessDenied });
+        }
     }
 
     protected renderContent(context: Context): JSX.Element {
         return this.props.children as any;
     }
 
-    protected get accessToken() {
+    protected get accessToken(): string {
         return this._accessToken;
+    }
+
+    protected get tenantId(): string {
+        return this._tenantId;
     }
 
     public componentDidMount() {
@@ -127,14 +132,14 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
         switch (this.state.userAuthenticationStatus) {
             case UserAuthenticationStatus.AccessDenied:
                 content = x => (
-                    <Surface>Doh, it would appear you do not have LMS365 installed on your Office 365 Tenant! Please visit our <a href="https://www.elearningforce.com/teams" target="_blank">website</a> on how to get LMS365 for your organisation.</Surface>
+                    <Surface style={{ backgroundColor: 'transparent' }}>Doh, it would appear you do not have LMS365 installed on your Office 365 Tenant! Please visit our <a href="https://www.elearningforce.com/teams" target="_blank">website</a> on how to get LMS365 for your organisation.</Surface>
                 );
                 break;
             case UserAuthenticationStatus.Authenticated:
                 content = x => this.renderContent(x);
                 break;
             case UserAuthenticationStatus.NotAuthenticated:
-                content = (x) => <LoginButton context={x} onAuthenticate={x => this.onAuthenticated(x)} />;
+                content = (x) => <LoginButton context={x} onAuthenticate={x => this.onAuthenticated(x.accessToken, x.tenantId)} />;
                 break;
         }
 

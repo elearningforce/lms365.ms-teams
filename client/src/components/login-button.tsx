@@ -4,7 +4,7 @@ import { Context, PrimaryButton, SecondaryButton, Surface } from 'msteams-ui-com
 interface LoginButtonProps {
     context: Context;
 
-    onAuthenticate: (token: string) => void;
+    onAuthenticate: (result: { accessToken: string, tenantId: string }) => void;
 }
 
 export class LoginButton extends React.Component<LoginButtonProps, any> {
