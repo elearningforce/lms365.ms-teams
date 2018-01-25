@@ -116,13 +116,13 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                     {
                         `
                             body { overflow: auto !important; }
-                            .--efLms365Dashboard #lms365 .lbUserInfo .user-photo { display: none; }
-                            .--efLms365Dashboard .k-grid .k-hierarchy-cell { padding: 0 0 0 0.6em; }
-                            .--efLms365Dashboard #lms365 .courseCertificateDownload a { cursor:default; }
-                            .--efLms365Dashboard #lms365 .courseCertificateDownload .course-icon-text { display:none; }
-                            .--efLms365Dashboard #lms365 .lCoursesCertificate a { cursor:default; }
-                            .--efLms365Course-page .course-certificate a { display:none; }
-                            .course-management-button { display:none; }
+                            #lms365 .user-photo { display: none; }
+                            .k-grid .k-hierarchy-cell { padding: 0 0 0 0.6em; }
+                            #lms365 .courseCertificateDownload a { cursor: default; }
+                            #lms365 .courseCertificateDownload .course-icon-text { display: none; }
+                            #lms365 .lCoursesCertificate a { cursor: default; }
+                            .course-certificate a { display: none; }
+                            .course-management-button { display: none; }
                         `
                     }
                 </style>

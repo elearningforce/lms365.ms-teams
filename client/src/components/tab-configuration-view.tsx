@@ -29,12 +29,8 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         this.state = {
             theme: ThemeStyle.Light,
             viewType: ViewType.Dashboard,
-<<<<<<< HEAD
-            name: 'Dashboard'
-=======
             name: 'Dashboard',
-            renderNameInput: false    
->>>>>>> be526edb2966e962872a8aa3e1ecb3224abd6a18
+            renderNameInput: false
         };
     }
 
@@ -105,15 +101,12 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
             }
 
             saveEvent.notifySuccess();
-<<<<<<< HEAD
-=======
-        });  
-        
+        });
+
         microsoftTeams.settings.getSettings(settings => {
             if (!settings || !settings.entityId) {
                 this.setState({ renderNameInput: true });
             }
->>>>>>> be526edb2966e962872a8aa3e1ecb3224abd6a18
         });
     }
 
