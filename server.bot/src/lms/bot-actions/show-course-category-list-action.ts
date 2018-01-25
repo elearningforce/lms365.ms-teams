@@ -1,5 +1,5 @@
 import { AttachmentLayout, EntityRecognizer, Message, Session, IIsAttachment } from 'botbuilder';
-import { ActionDefinition } from './action';
+import { Action } from './action-definition';
 import { LmsContext } from '../lms-context';
 import { Course, CourseCategory, CourseType } from '../models';
 import { ResourceSet } from '../resource-set';
@@ -9,9 +9,7 @@ import { SortDirection } from '../../common/common';
 
 const resourceSet = ResourceSet.instance;
 
-export class SearchCourseCategoryListActionHandler {
-    public static readonly instance: SearchCourseCategoryListActionHandler = new SearchCourseCategoryListActionHandler();
-
+export class SearchCourseCategoryListAction {
     public async handle(session: Session, lmsContext: LmsContext, args: any) {
         const courseCategories = await lmsContext.modelStorages.courseCategories.getAll();
         const comparer = (x, y) => Comparer.instance.compare(x.courses.length, y.courses.length, SortDirection.Descending);
@@ -28,9 +26,3 @@ export class SearchCourseCategoryListActionHandler {
         session.endDialog();
     }
 }
-
-export const ShowCourseCategoryList: ActionDefinition = {
-    action: SearchCourseCategoryListActionHandler.instance.handle.bind(SearchCourseCategoryListActionHandler.instance),
-    key: 'ShowCourseCategoryList',
-    title: 'Show Course Categories'
-};

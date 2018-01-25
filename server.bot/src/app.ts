@@ -4,14 +4,9 @@ import { IMessage, Message, Session } from 'botbuilder';
 import * as teamBuilder from 'botbuilder-teams';
 import { Bot } from './bot';
 import { LuisRecognizer } from './luis-recognizer';
-import { wrapAction } from './lms/bot-actions/action';
-import { SearchCourseList } from './lms/bot-actions/search-course-list';
-import { SelectCourseCatalog } from './lms/bot-actions/select-course-catalog';
-import { ShowCourseCatalogList } from './lms/bot-actions/show-course-catalog-list';
-import { ShowCourseCategoryList } from './lms/bot-actions/show-course-category-list';
-import { Greeting, Help } from './lms/bot-actions/greeting';
+import { ActionDefinition, wrapAction } from './lms/bot-actions/action-definition';
+import { ActionDefinitionList } from './lms/bot-actions/action-definition-list';
 import { LmsContextProvider } from './lms/lms-context-provider';
-import { None } from './lms/bot-actions/none';
 
 env.load();
 
@@ -23,16 +18,20 @@ const luisModelUrl = process.env.LUIS_MODEL_URL;
 const connector = new teamBuilder.TeamsChatConnector({ appId: appId, appPassword: appPassword });
 const recognizer = new LuisRecognizer(luisModelUrl);
 
-export const bot = new Bot(connector, [wrapAction(None)]);
+export const bot = new Bot(connector, [wrapAction(ActionDefinitionList.None)]);
 
 bot.recognizer(recognizer);
 
-bot.dialog(Greeting.key, wrapAction(Greeting)).triggerAction({ matches: Greeting.key });
-bot.dialog(Help.key, wrapAction(Help)).triggerAction({ matches: Help.key });
-bot.dialog(SearchCourseList.key, wrapAction(SearchCourseList)).triggerAction({ matches: SearchCourseList.key });
-bot.dialog(SelectCourseCatalog.key, wrapAction(SelectCourseCatalog)).triggerAction({ matches : SelectCourseCatalog.key });
-bot.dialog(ShowCourseCatalogList.key, wrapAction(ShowCourseCatalogList)).triggerAction({ matches: ShowCourseCatalogList.key });
-bot.dialog(ShowCourseCategoryList.key, wrapAction(ShowCourseCategoryList)).triggerAction({ matches: ShowCourseCategoryList.key });
+function registerDialog(actionDefinition: ActionDefinition) {
+    bot.dialog(actionDefinition.key, wrapAction(actionDefinition)).triggerAction({ matches: actionDefinition.key });
+}
+
+registerDialog(ActionDefinitionList.Greeting);
+registerDialog(ActionDefinitionList.Help);
+registerDialog(ActionDefinitionList.SearchCourseList);
+registerDialog(ActionDefinitionList.SelectCourseCatalog);
+registerDialog(ActionDefinitionList.ShowCourseCatalogList);
+registerDialog(ActionDefinitionList.ShowCourseCategoryList);
 
 connector.onQuery('searchCmd', (message: IMessage, query, callback) => {
     bot.loadSession(message.address, async (error, session: Session) => {

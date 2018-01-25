@@ -1,8 +1,6 @@
 import { CardAction, CardImage, IAttachment, IIsAttachment, Message, Session, ThumbnailCard, HeroCard } from 'botbuilder';
 import { AppInfo, AppType } from 'ef.lms365';
-import { SelectCourseCatalog } from './bot-actions/select-course-catalog';
-import { ShowCourseCatalogList } from './bot-actions/show-course-catalog-list';
-import { ShowCourseCategoryList } from './bot-actions/show-course-category-list';
+import { ActionDefinitionList } from './bot-actions/action-definition-list';
 import { LmsContext } from './lms-context';
 import { Course, CourseCatalog, CourseType, CourseCategory } from './models';
 import { DeepLinkBuilder } from './deep-link-builder';
@@ -105,7 +103,7 @@ export class CourseCatalogAttachmentBuilder {
 <span style="font-size:1.2rem; color:#858c98; font-weight:100; width:100%; text-align:center; display:inline-block; padding-top:5px">${index + 1}/${allItemCount}</span><br>
             `)
             .buttons([
-                CardAction.imBack(session, SelectCourseCatalog.titleFormat(courseCatalog), SelectCourseCatalog.title),
+                CardAction.imBack(session, ActionDefinitionList.SelectCourseCatalog.titleFormat(courseCatalog), ActionDefinitionList.SelectCourseCatalog.title),
                 CardAction.openUrl(session, DeepLinkBuilder.buildCourseCatalogLink(courseCatalog.url), 'View')
             ]);
     }
@@ -168,12 +166,12 @@ export class GreetingAttachmentBuilder {
             .title(resourceSet.Greeting_Title(user.name))
             .text(resourceSet.Greeting)
             .buttons([
-                CardAction.imBack(session, ShowCourseCatalogList.title, ShowCourseCatalogList.title),
+                CardAction.imBack(session, ActionDefinitionList.ShowCourseCatalogList.title, ActionDefinitionList.ShowCourseCatalogList.title),
                 CardAction.imBack(session, messageBuilder(CourseType.ELearning), messageBuilder(CourseType.ELearning)),
                 CardAction.imBack(session, messageBuilder(CourseType.Webinar), messageBuilder(CourseType.Webinar)),
                 CardAction.imBack(session, messageBuilder(CourseType.TrainingPlan), messageBuilder(CourseType.TrainingPlan)),
                 CardAction.imBack(session, CommonHelper.escape(messageBuilder(CourseType.ClassRoom)), messageBuilder(CourseType.ClassRoom)),
-                CardAction.imBack(session, ShowCourseCategoryList.title, ShowCourseCategoryList.title)
+                CardAction.imBack(session, ActionDefinitionList.ShowCourseCategoryList.title, ActionDefinitionList.ShowCourseCategoryList.title)
             ]);
     }
 }

@@ -1,5 +1,5 @@
 import { AttachmentLayout, EntityRecognizer, Message, Session, IIsAttachment } from 'botbuilder';
-import { ActionDefinition } from './action';
+import { Action } from './action-definition';
 import { LmsContext } from '../lms-context';
 import { Course, CourseCategory, CourseType } from '../models';
 import { ResourceSet } from '../resource-set';
@@ -22,9 +22,7 @@ function getCourseType(value: string): CourseType {
     }
 }
 
-export class SearchCourseListActionHandler {
-    public static readonly instance: SearchCourseListActionHandler = new SearchCourseListActionHandler();
-
+export class SearchCourseListAction implements Action {
     private static attachCoursesToCategories(categories: CourseCategory[], courses: Course[]) {
         for (let category of categories) {
             const coursesByCategory = courses.filter(x => x.categories.find(y => y.id == category.id));
@@ -38,7 +36,7 @@ export class SearchCourseListActionHandler {
         const uniqueCourseCategories = ArrayHelper.groupBy<CourseCategory>(allCourseCategories, x => x.id).map(x => x.values[0]);
         const comparer = (x, y) => Comparer.instance.compare(x.courses.length, y.courses.length, SortDirection.Descending);
 
-        SearchCourseListActionHandler.attachCoursesToCategories(uniqueCourseCategories, courses);
+        SearchCourseListAction.attachCoursesToCategories(uniqueCourseCategories, courses);
 
         const courseCategoryChunks = ArrayHelper.split(uniqueCourseCategories.sort(comparer), 6);
 
@@ -115,9 +113,3 @@ export class SearchCourseListActionHandler {
         session.endDialog();
     }
 }
-
-export const SearchCourseList: ActionDefinition = {
-    action: SearchCourseListActionHandler.instance.handle.bind(SearchCourseListActionHandler.instance),
-    key: 'SearchCourseList',
-    title: 'Search Courses'
-};
