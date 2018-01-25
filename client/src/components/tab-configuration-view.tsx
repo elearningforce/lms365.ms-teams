@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Context, Input, Radiobutton, RadiobuttonGroup, ThemeStyle, Surface } from 'msteams-ui-components-react';
 import { View } from './view';
+import { GlobalConfig } from 'ef.lms365';
+import * as $ from 'jquery';
 
 enum ViewType {
     Course,
@@ -14,6 +16,7 @@ export interface TabConfigurationState {
     viewType?: ViewType;
     name?: string;
     renderNameInput: boolean;
+    validationMessage?: string;
 }
 
 const viewPropsByViewType = {
@@ -30,7 +33,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
             theme: ThemeStyle.Light,
             viewType: ViewType.Dashboard,
             name: 'Dashboard',
-            renderNameInput: false    
+            renderNameInput: false
         };
     }
 
@@ -45,16 +48,22 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
 
     private renderUrlInputSection(styles: any): JSX.Element[] {
         return this.state.viewType != ViewType.Dashboard
-             ? [
+            ? [
                 <div style={styles.section}>Site url:</div>,
-                this.validateUrlFormat(this.state.url) ? null: <div style={styles.error}>That isn't a valid URL.</div>,
-                <Input onChange={x => this.setState({ url: x.target.value })}
+                this.validateUrlFormat(this.state.url) ? null : <div style={styles.error}>That isn't a valid URL.</div>,
+                <Input onChange={x => this.setState({ url: x.target.value, validationMessage: null })}
                     placeholder="Site url"
                     style={styles.input}
-                    value={this.state.url}                    
-                />,                
+                    value={this.state.url}
+                />,
             ]
             : null;
+    }
+
+    private renderValidationMessage(styles: any) {
+        if (this.state.validationMessage) {
+            return <div style={styles.error}>{this.state.validationMessage}</div>;
+        }
     }
 
     private renderRadioButton(viewType: ViewType): JSX.Element {
@@ -70,7 +79,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         const url = viewType == ViewType.Dashboard
             ? ''
             : 'https://';
-        this.setState({ viewType: viewType, name: name, url: url });
+        this.setState({ viewType: viewType, name: name, url: url, validationMessage: null });
     }
 
     protected initialize() {
@@ -78,8 +87,8 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
 
         const microsoftTeams = (window as any).microsoftTeams;
 
-        microsoftTeams.settings.registerOnSaveHandler((saveEvent) => {
-            const viewType = this.state.viewType;            
+        microsoftTeams.settings.registerOnSaveHandler(async (saveEvent) => {
+            const viewType = this.state.viewType;
             const tabName = this.state.name;
             let webUrl = this.state.url;
 
@@ -87,22 +96,28 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
                 saveEvent.notifyFailure();
             } else {
                 webUrl = this.trimUrl(webUrl);
-                const viewProps = viewPropsByViewType[viewType];
 
-                let queryParams = viewType == ViewType.Dashboard
-                    ? 'LeaderBoard=false&Transcript=false&CoursesEnded=false'
-                    : 'webUrl=' + encodeURIComponent(webUrl);
+                if (!await this.validateCourseUrl(webUrl)) {
+                    saveEvent.notifyFailure();
+                }
+                else {
+                    const viewProps = viewPropsByViewType[viewType];
 
-                microsoftTeams.settings.setSettings({
-                    entityId: `lms365${viewProps.key}${encodeURIComponent(webUrl)}`,
-                    contentUrl: `${document.location.origin}/Tab?view=${viewProps.key}&${queryParams}`,
-                    suggestedDisplayName: tabName                    
-                });
+                    let queryParams = viewType == ViewType.Dashboard
+                        ? 'LeaderBoard=false&Transcript=false&CoursesEnded=false'
+                        : 'webUrl=' + encodeURIComponent(webUrl);
+
+                    microsoftTeams.settings.setSettings({
+                        entityId: `lms365${viewProps.key}${encodeURIComponent(webUrl)}`,
+                        contentUrl: `${document.location.origin}/Tab?view=${viewProps.key}&${queryParams}`,
+                        suggestedDisplayName: tabName
+                    });
+
+                    saveEvent.notifySuccess();
+                }
             }
+        });
 
-            saveEvent.notifySuccess();
-        });  
-        
         microsoftTeams.settings.getSettings(settings => {
             if (!settings || !settings.entityId) {
                 this.setState({ renderNameInput: true });
@@ -114,10 +129,10 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         const { rem, font } = context;
         const { sizes } = font;
         const styles = {
-            section: {...sizes.title2, marginTop: rem(1.4), marginBottom: rem(1.4)},
+            section: { ...sizes.title2, marginTop: rem(1.4), marginBottom: rem(1.4) },
             input: {
                 paddingLeft: rem(0.5),
-                paddingRight: rem(0.5)                
+                paddingRight: rem(0.5)
             },
             surface: { backgroundColor: 'transparent' },
             error: { ...sizes.caption, color: 'red' }
@@ -128,15 +143,14 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         return (
             <Surface style={styles.surface}>
                 {this.renderNameInputSection(styles)}
-
                 <div style={styles.section}>View:</div>
                 <RadiobuttonGroup>
                     {this.renderRadioButton(ViewType.Dashboard)}
                     {/* {this.renderRadioButton(ViewType.CourseCatalog)} */}
                     {this.renderRadioButton(ViewType.Course)}
                 </RadiobuttonGroup>
-
                 {this.renderUrlInputSection(styles)}
+                {this.renderValidationMessage(styles)}
             </Surface>
         );
     }
@@ -157,7 +171,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         }
         value = this.trimEnd(value, '/SitePages/');
         value = this.trimEnd(value, '/');
-        
+
         return value;
     }
 
@@ -184,5 +198,26 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
 
     private validateUrlFormat(value: string): boolean {
         return !value || value.indexOf('https://') === 0;
+    }
+
+    private async validateCourseUrl(url: string): Promise<boolean> {
+        this.setState({ validationMessage: null });
+        if (this.state.viewType == ViewType.Dashboard) {
+            return true;
+        }
+        
+        const requestUrl = `https://${GlobalConfig.instance.apiHost}/odata/v2/Courses?$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${encodeURIComponent(url)}'`;        
+        return await $.ajax(
+            {
+                url: requestUrl,
+                headers: { Authorization: 'Bearer ' + this.accessToken },
+            })
+            .then(x => {                
+                if (x && x.value && x.value.length) {
+                    return true;
+                }
+                this.setState({ validationMessage: 'Sorry we cannot find a course with that URL in our system. Please recheck the entered value.' });
+                return false;
+            });
     }
 }

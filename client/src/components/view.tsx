@@ -22,6 +22,8 @@ const themeByName = {
 };
 
 export class View<P = any, S extends ViewState = ViewState> extends React.Component<P, S> {
+    private _accessToken: string;
+
     public constructor(props: any) {
         super(props);
 
@@ -60,12 +62,12 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
             if (error || !token) {
                 this.setState({ userAuthenticationStatus: UserAuthenticationStatus.NotAuthenticated });
             } else {
-                this.setState({ userAuthenticationStatus: UserAuthenticationStatus.Authenticated });
+                this.onAuthenticated(token);
             }
         });
 
         this.setState({ theme: themeByName[context.theme] || ThemeStyle.Light });
-    }
+    }    
 
     protected getRedirectViewUrlFromContext(context: any): string {
         const pathName = window.location.pathname;
@@ -90,8 +92,17 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
         }        
     }
 
+    private onAuthenticated(token:string){
+        this._accessToken = token;
+        this.setState({ userAuthenticationStatus: UserAuthenticationStatus.Authenticated });
+    }
+
     protected renderContent(context: Context): JSX.Element {
         return this.props.children as any;
+    }
+
+    protected get accessToken() {
+        return this._accessToken;
     }
 
     public componentDidMount() {
@@ -106,7 +117,7 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                 content = x => this.renderContent(x);
                 break;
             case UserAuthenticationStatus.NotAuthenticated:
-                content = (x) => <LoginButton context={x} onAuthenticate={() => this.setState({ userAuthenticationStatus: UserAuthenticationStatus.Authenticated })} />;
+                content = (x) => <LoginButton context={x} onAuthenticate={x => this.onAuthenticated(x)} />;
                 break;
         }
 
