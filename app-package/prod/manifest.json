@@ -16,7 +16,7 @@
     },
     "description": {
         "full": "Enable your learners to find, take and track their LMS365 Training directly inside Teams as well as using our Intelligent BOT to help finding Courses and Training Plans available in your catalogs.",
-        "short": "Easily insert and share your LMS365 Training in channels and chats"
+        "short": "Easily insert and share training in channels and chats"
     },
     "icons": {
         "outline": "lms365-teams-outline-icon-20x20px.png",
