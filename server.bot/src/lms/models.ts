@@ -53,6 +53,11 @@ export interface Room {
     title: string;
 }
 
+export interface TenantInfo {
+    courseCatalogCount: number;
+    courseCountByType: { [type: number]: number };
+}
+
 export interface User {
     email?: string;
     loginName: string;

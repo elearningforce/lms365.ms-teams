@@ -24,7 +24,8 @@ export const wrapAction = (actionDefinition: ActionDefinition) =>
             const lmsContext = await LmsContextProvider.instance.get(session);
 
             actionDefinition.action.handle(session, lmsContext, args, next);
-        } catch {
+        } catch (error) {
+            console.dir(error);
             session.send(resourceSet.TenantNotAccessible);
         }
     };

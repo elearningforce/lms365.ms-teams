@@ -3,6 +3,10 @@ import { Course, CourseType } from '../models';
 
 const courseUrlQueryParameters = '$select=CEU,CourseID,CourseType,Description,Duration,Id,ImageUrl,LongDescription,Title,Rating&$expand=Admins,Categories,CourseSessions,SharepointWeb,Rating';
 
+function getFilterByCourseCatalogId(courseCatalogId: string) {
+    return courseCatalogId ? `CourseCatalogId eq ${encodeURIComponent(courseCatalogId)} and ` : '';
+}
+
 export class CommonHelper {
     public static Fields = {
         Course: {
@@ -43,29 +47,22 @@ export class CommonHelper {
     public static Urls = {
         Course: {
             getAll: (courseCatalogId: string) => {
-                const courseCatalogIdFilter = courseCatalogId ? `CourseCatalogId eq ${encodeURIComponent(courseCatalogId)} and ` : '';
-
-                return `odata/v2/Courses?$filter=${courseCatalogIdFilter}IsPublished eq true and ShowInCatalog eq true&${courseUrlQueryParameters}`;
+                return `odata/v2/Courses?$filter=${getFilterByCourseCatalogId(courseCatalogId)}IsPublished eq true and ShowInCatalog eq true&${courseUrlQueryParameters}`;
+            },
+            getCountByType: (courseCatalogId: string, type: CourseType) => {
+                return `odata/v2/Courses/$count?$filter=${getFilterByCourseCatalogId(courseCatalogId)}IsPublished eq true and ShowInCatalog eq true and CourseType eq '${CourseType[type]}'`;
             },
             getByCategoryName: (courseCatalogId: string, categoryName: string) => {
-                const courseCatalogIdFilter = courseCatalogId ? `CourseCatalogId eq ${encodeURIComponent(courseCatalogId)} and ` : '';
-
-                return `odata/v2/Courses?$filter=${courseCatalogIdFilter}IsPublished eq true and ShowInCatalog eq true and Categories/any(x:x/Name eq '${encodeURIComponent(categoryName)}')&${courseUrlQueryParameters}`;
+                return `odata/v2/Courses?$filter=${getFilterByCourseCatalogId(courseCatalogId)}IsPublished eq true and ShowInCatalog eq true and Categories/any(x:x/Name eq '${encodeURIComponent(categoryName)}')&${courseUrlQueryParameters}`;
             },
             getByType: (courseCatalogId: string, courseType: CourseType) => {
-                const courseCatalogIdFilter = courseCatalogId ? `CourseCatalogId eq ${encodeURIComponent(courseCatalogId)} and ` : '';
-
-                return `odata/v2/Courses?$filter=${courseCatalogIdFilter}CourseType eq '${CourseType[courseType]}' and IsPublished eq true and ShowInCatalog eq true&${courseUrlQueryParameters}`;
+                return `odata/v2/Courses?$filter=${getFilterByCourseCatalogId(courseCatalogId)}CourseType eq '${CourseType[courseType]}' and IsPublished eq true and ShowInCatalog eq true&${courseUrlQueryParameters}`;
             },
             getByTypeAndCategoryName: (courseCatalogId: string, courseType: CourseType, categoryName: string) => {
-                const courseCatalogIdFilter = courseCatalogId ? `CourseCatalogId eq ${encodeURIComponent(courseCatalogId)} and ` : '';
-
-                return `odata/v2/Courses?$filter=${courseCatalogIdFilter}CourseType eq '${CourseType[courseType]}' and IsPublished eq true and ShowInCatalog eq true and Categories/any(x:x/Name eq '${encodeURIComponent(categoryName)}')&${courseUrlQueryParameters}`;
+                return `odata/v2/Courses?$filter=${getFilterByCourseCatalogId(courseCatalogId)}CourseType eq '${CourseType[courseType]}' and IsPublished eq true and ShowInCatalog eq true and Categories/any(x:x/Name eq '${encodeURIComponent(categoryName)}')&${courseUrlQueryParameters}`;
             },
             getByKeyword: (courseCatalogId: string, keyword: string) => {
-                const courseCatalogIdFilter = courseCatalogId ? `CourseCatalogId eq ${encodeURIComponent(courseCatalogId)} and ` : '';
-
-                return `odata/v2/Courses?$filter=${courseCatalogIdFilter}contains(Title,'${keyword}') and IsPublished eq true and ShowInCatalog eq true&${courseUrlQueryParameters}`;
+                return `odata/v2/Courses?$filter=${getFilterByCourseCatalogId(courseCatalogId)}contains(Title,'${keyword}') and IsPublished eq true and ShowInCatalog eq true&${courseUrlQueryParameters}`;
             },
             getImage: (tenantId: string, environmentConfig: EnvironmentConfig, course: Course) => {
                 const appInfo = environmentConfig.getAppInfo(AppType.CourseCatalog);
@@ -77,7 +74,8 @@ export class CommonHelper {
         },
         CourseCatalog: {
             getAll: () => `odata/v2/CourseCatalogs?$select=Id,Title&$expand=SharepointWeb`,
-            getByUrl: (url: string) => `odata/v2/CourseCatalogs?$select=Id,Title&$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${CommonHelper.encodeURIComponent(url)}'`
+            getByUrl: (url: string) => `odata/v2/CourseCatalogs?$select=Id,Title&$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${CommonHelper.encodeURIComponent(url)}'`,
+            getCount: () => `odata/v2/CourseCatalogs/$count`
         },
         CourseCategory: {
             getAll: (courseCatalogId: string) => {

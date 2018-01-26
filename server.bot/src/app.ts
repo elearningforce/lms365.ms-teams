@@ -20,8 +20,6 @@ const recognizer = new LuisRecognizer(luisModelUrl);
 
 export const bot = new Bot(connector, [wrapAction(ActionDefinitionList.None)]);
 
-bot.recognizer(recognizer);
-
 function registerDialog(actionDefinition: ActionDefinition) {
     bot.dialog(actionDefinition.key, wrapAction(actionDefinition)).triggerAction({ matches: actionDefinition.key });
 }
@@ -32,6 +30,8 @@ registerDialog(ActionDefinitionList.SearchCourseList);
 registerDialog(ActionDefinitionList.SelectCourseCatalog);
 registerDialog(ActionDefinitionList.ShowCourseCatalogList);
 registerDialog(ActionDefinitionList.ShowCourseCategoryList);
+
+bot.recognizer(recognizer);
 
 connector.onQuery('searchCmd', (message: IMessage, query, callback) => {
     bot.loadSession(message.address, async (error, session: Session) => {

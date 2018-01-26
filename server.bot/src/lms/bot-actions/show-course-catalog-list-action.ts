@@ -12,10 +12,14 @@ export class ShowCourseCatalogListAction implements Action {
         for (let i = 0; i < chunks.length; i++) {
             const attachments: IIsAttachment[] = [];
             const chunk = chunks[i];
+            const startPageIndex = i * 10;
+            const endPageIndex = (((i + 1) * 10) > courseCatalogs.length)
+                ? (i * 10 + courseCatalogs.length % 10)
+                : ((i + 1) * 10);
 
             for (let j = 0; j < chunk.length; j++) {
                 const courseCatalog = chunk[j];
-                const attachment = lmsContext.attachmentBuilders.courseCatalogs.buildListItem(courseCatalog, i * 10 + j, courseCatalogs.length);
+                const attachment = lmsContext.attachmentBuilders.courseCatalogs.buildListItem(courseCatalog, startPageIndex + j, endPageIndex);
 
                 attachments.push(attachment);
             }

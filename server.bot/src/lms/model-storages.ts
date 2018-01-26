@@ -1,5 +1,5 @@
 import { LmsContext } from './lms-context';
-import { Course, CourseCatalog, CourseCategory, CourseType } from './models';
+import { Course, CourseCatalog, CourseCategory, CourseType, TenantInfo } from './models';
 import { CommonHelper } from './helpers/common-helper';
 
 export abstract class StorageBase<T> {
@@ -54,6 +54,12 @@ export class CourseStorage extends StorageBase<Course> {
     public async getByTypeAndCategoryName(courseType: CourseType, categoryName: string): Promise<Course[]> {
         return this.getModels(CommonHelper.Urls.Course.getByTypeAndCategoryName(this.courseCatalogId, courseType, categoryName));
     }
+
+    public async getCountByType(type: CourseType): Promise<number> {
+        const url = CommonHelper.Urls.Course.getCountByType(this.courseCatalogId, type);
+
+        return this.lmsContext.queryExecuter.execute({ url: url }).then(x => parseInt(x as string));
+    }
 }
 
 export class CourseCatalogStorage extends StorageBase<CourseCatalog> {
@@ -69,6 +75,12 @@ export class CourseCatalogStorage extends StorageBase<CourseCatalog> {
         const result = await this.getModels(CommonHelper.Urls.CourseCatalog.getByUrl(url));
 
         return result.length == 1 ? result[0] : null;
+    }
+
+    public async getCount(): Promise<number> {
+        const url = CommonHelper.Urls.CourseCatalog.getCount();
+
+        return this.lmsContext.queryExecuter.execute({ url: url }).then(x => parseInt(x as string));
     }
 
     // protected createModel(index: number): CourseCatalog {
@@ -114,15 +126,44 @@ export class CourseCategoryStorage extends StorageBase<CourseCategory> {
     }
 }
 
+export class TenantInfoStorage extends StorageBase<TenantInfo> {
+    protected createModel(source: any): TenantInfo {
+        throw new Error("Method not implemented.");
+    }
+
+    public async get(): Promise<TenantInfo> {
+        const courseStorage = this.lmsContext.modelStorages.courses;
+        const value = await Promise.all([
+            this.lmsContext.modelStorages.courseCatalogs.getCount(),
+            courseStorage.getCountByType(CourseType.ClassRoom),
+            courseStorage.getCountByType(CourseType.ELearning),
+            courseStorage.getCountByType(CourseType.TrainingPlan),
+            courseStorage.getCountByType(CourseType.Webinar)
+        ]);
+
+        return {
+            courseCatalogCount: value[0],
+            courseCountByType: {
+                [CourseType.ClassRoom]: value[1],
+                [CourseType.ELearning]: value[2],
+                [CourseType.TrainingPlan]: value[3],
+                [CourseType.Webinar]: value[4]
+            }
+        };
+    }
+}
+
 export class ModelStorageFactory {
     private readonly _courseCatalogs: CourseCatalogStorage;
     private readonly _courseCategories: CourseCategoryStorage;
     private readonly _courses: CourseStorage;
+    private readonly _tenantInfo: TenantInfoStorage;
 
     public constructor(lmsContext: LmsContext) {
         this._courseCatalogs = new CourseCatalogStorage(lmsContext);
         this._courseCategories = new CourseCategoryStorage(lmsContext);
         this._courses = new CourseStorage(lmsContext);
+        this._tenantInfo = new TenantInfoStorage(lmsContext);
     }
 
     public get courseCatalogs(): CourseCatalogStorage {
@@ -135,5 +176,9 @@ export class ModelStorageFactory {
 
     public get courses(): CourseStorage {
         return this._courses;
+    }
+
+    public get tenantInfo(): TenantInfoStorage {
+        return this._tenantInfo;
     }
 }

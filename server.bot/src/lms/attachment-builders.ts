@@ -2,10 +2,11 @@ import { CardAction, CardImage, IAttachment, IIsAttachment, ICardAction, IIsCard
 import { AppInfo, AppType } from 'ef.lms365';
 import { ActionDefinitionList } from './bot-actions/action-definition-list';
 import { LmsContext } from './lms-context';
-import { Course, CourseCatalog, CourseType, CourseCategory } from './models';
+import { Course, CourseCatalog, CourseType, CourseCategory, TenantInfo } from './models';
 import { DeepLinkBuilder } from './deep-link-builder';
 import { ResourceSet } from './resource-set';
 import { CommonHelper } from './helpers/common-helper';
+import { TenantInfoStorage } from './model-storages';
 
 const courseFields = CommonHelper.Fields.Course;
 const resourceSet = ResourceSet.instance;
@@ -153,38 +154,49 @@ export class GreetingAttachmentBuilder {
         this._lmsContext = lmsContext;
     }
 
-    private createButtons(session: Session): ICardAction[] | IIsCardAction[] {
+    private createButtons(session: Session, tenantInfo: TenantInfo): ICardAction[] | IIsCardAction[] {
         const messageBuilder = (courseType: CourseType) =>
             (courseType != CourseType.TrainingPlan)
-                ? `Show ${CommonHelper.escape(resourceSet.getCourseTypeName(courseType))} Courses`
-                : `Show ${resourceSet.TrainingPlans}`;
-
-        return [
-            CardAction.imBack(session, ActionDefinitionList.ShowCourseCatalogList.title, ActionDefinitionList.ShowCourseCatalogList.title),
-            CardAction.imBack(session, messageBuilder(CourseType.ELearning), messageBuilder(CourseType.ELearning)),
-            CardAction.imBack(session, messageBuilder(CourseType.Webinar), messageBuilder(CourseType.Webinar)),
-            CardAction.imBack(session, messageBuilder(CourseType.TrainingPlan), messageBuilder(CourseType.TrainingPlan)),
-            CardAction.imBack(session, CommonHelper.escape(messageBuilder(CourseType.ClassRoom)), messageBuilder(CourseType.ClassRoom)),
+                ? `Show ${CommonHelper.escape(resourceSet.getCourseTypeName(courseType))} Courses (${tenantInfo.courseCountByType[courseType]})`
+                : `Show ${resourceSet.TrainingPlans} (${tenantInfo.courseCountByType[courseType]})`;
+        const result = [
+            (tenantInfo.courseCatalogCount > 1)
+                ? CardAction.imBack(session, ActionDefinitionList.ShowCourseCatalogList.title, `${ActionDefinitionList.ShowCourseCatalogList.title} (${tenantInfo.courseCatalogCount})`)
+                : null,
+            tenantInfo.courseCountByType[CourseType.ELearning]
+                ? CardAction.imBack(session, messageBuilder(CourseType.ELearning), messageBuilder(CourseType.ELearning))
+                : null,
+            tenantInfo.courseCountByType[CourseType.Webinar]
+                ? CardAction.imBack(session, messageBuilder(CourseType.Webinar), messageBuilder(CourseType.Webinar))
+                : null,
+            tenantInfo.courseCountByType[CourseType.TrainingPlan]
+                ? CardAction.imBack(session, messageBuilder(CourseType.TrainingPlan), messageBuilder(CourseType.TrainingPlan))
+                : null,
+            tenantInfo.courseCountByType[CourseType.ClassRoom]
+                ? CardAction.imBack(session, CommonHelper.escape(messageBuilder(CourseType.ClassRoom)), messageBuilder(CourseType.ClassRoom))
+                : null,
             CardAction.imBack(session, ActionDefinitionList.ShowCourseCategoryList.title, ActionDefinitionList.ShowCourseCategoryList.title)
         ];
+
+        return result.filter(x => x != null);
     }
 
-    public build(): IAttachment | IIsAttachment {
+    public build(tenantInfo: TenantInfo): IAttachment | IIsAttachment {
         const session = this._lmsContext.session;
         const user = session.message.user;
 
         return new ThumbnailCard(session)
             .title(resourceSet.Greeting_Title(user.name))
             .text(resourceSet.Greeting)
-            .buttons(this.createButtons(session));
+            .buttons(this.createButtons(session, tenantInfo));
     }
 
-    public buildShortMode(content: string): IAttachment | IIsAttachment {
+    public buildShortMode(tenantInfo: TenantInfo, content: string): IAttachment | IIsAttachment {
         const session = this._lmsContext.session;
 
         return new ThumbnailCard(session)
             .subtitle(content)
-            .buttons(this.createButtons(session));
+            .buttons(this.createButtons(session, tenantInfo));
     }
 }
 

@@ -14,10 +14,15 @@ export class SelectCourseCatalogAction implements Action {
 
         if (urlEntity) {
             const url = decodeURI((urlEntity as any).entity);
-            const courseCatalog = await lmsContext.modelStorages.courseCatalogs.getByUrl(url);
+            const value = await Promise.all([
+                lmsContext.modelStorages.courseCatalogs.getByUrl(url),
+                lmsContext.modelStorages.tenantInfo.get()
+            ]);
+            const courseCatalog = value[0];
+            const tenantInfo = value[1];
 
             if (courseCatalog) {
-                const attachment = lmsContext.attachmentBuilders.greeting.buildShortMode(resourceSet.CourseCatalogList_WasSelected(courseCatalog.url));
+                const attachment = lmsContext.attachmentBuilders.greeting.buildShortMode(tenantInfo, resourceSet.CourseCatalogList_WasSelected(courseCatalog.url));
 
                 lmsContext.userStorage.set(CommonHelper.Keys.CourseCatalog, courseCatalog);
                 
