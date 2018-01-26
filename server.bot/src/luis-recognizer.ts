@@ -14,7 +14,9 @@ export class LuisRecognizer extends LuisRecognizerBase {
             console.log(`'${key}' - from cache.`);
         } else {
             super.recognize(context, (error: Error, result: IIntentRecognizerResult) => {
-                if (!error && result) {
+                console.dir(result);
+
+                if (!error && result && (result.score >= 0.5)) {
                     this._cache[key] = result;
                 }
 

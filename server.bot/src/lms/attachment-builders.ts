@@ -183,7 +183,7 @@ export class GreetingAttachmentBuilder {
 
     public build(tenantInfo: TenantInfo): IAttachment | IIsAttachment {
         const session = this._lmsContext.session;
-        const user = session.message.user;
+        const user = this._lmsContext.message.user;
 
         return new ThumbnailCard(session)
             .title(resourceSet.Greeting_Title(user.name))

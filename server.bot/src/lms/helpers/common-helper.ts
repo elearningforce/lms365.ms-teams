@@ -4,6 +4,8 @@ import { Course, CourseType } from '../models';
 const courseUrlQueryParameters = '$select=CEU,CourseID,CourseType,Description,Duration,Id,ImageUrl,LongDescription,Title,Rating&$expand=Admins,Categories,CourseSessions,SharepointWeb,Rating';
 
 function getFilterByCourseCatalogId(courseCatalogId: string) {
+    console.log(courseCatalogId);
+
     return courseCatalogId ? `CourseCatalogId eq ${encodeURIComponent(courseCatalogId)} and ` : '';
 }
 
@@ -73,9 +75,9 @@ export class CommonHelper {
             }
         },
         CourseCatalog: {
-            getAll: () => `odata/v2/CourseCatalogs?$select=Id,Title&$expand=SharepointWeb`,
+            getAll: () => `odata/v2/CourseCatalogs?$expand=Courses($select=Id),SharepointWeb&$filter=Courses/any(x:x/IsPublished eq true and x/ShowInCatalog eq true)&$select=Id,Title`,
             getByUrl: (url: string) => `odata/v2/CourseCatalogs?$select=Id,Title&$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${CommonHelper.encodeURIComponent(url)}'`,
-            getCount: () => `odata/v2/CourseCatalogs/$count`
+            getCount: () => `odata/v2/CourseCatalogs/$count?$expand=Courses($select=Id)&$filter=Courses/any(x:x/IsPublished eq true and x/ShowInCatalog eq true)`
         },
         CourseCategory: {
             getAll: (courseCatalogId: string) => {

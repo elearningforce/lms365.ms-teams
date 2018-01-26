@@ -1,4 +1,4 @@
-import { Session } from 'botbuilder';
+import { IMessage, Session } from 'botbuilder';
 import { LmsContext } from '../lms-context';
 import { LmsContextProvider } from '../lms-context-provider';
 import { ResourceSet } from '../resource-set';
@@ -16,12 +16,12 @@ export interface Action {
     handle(session: Session, lmsContext: LmsContext, args?: any, next?: any);
 }
 
-export const wrapAction = (actionDefinition: ActionDefinition) =>
+export const wrapAction = (actionDefinition: ActionDefinition, message?: IMessage) =>
     async (session: Session, args: any, next: any) => {
         session.sendTyping();
 
         try {
-            const lmsContext = await LmsContextProvider.instance.get(session);
+            const lmsContext = await LmsContextProvider.instance.get(session, message);
 
             actionDefinition.action.handle(session, lmsContext, args, next);
         } catch (error) {

@@ -33,10 +33,16 @@ registerDialog(ActionDefinitionList.ShowCourseCategoryList);
 
 bot.recognizer(recognizer);
 
-bot.dialog('firstRun', (session, args: any, next: any) => {
-    wrapAction(ActionDefinitionList.Greeting)(session, args, next);
+bot.on('conversationUpdate', message => {
+    console.dir(message);
 
-    session.endDialog();
+    if (message.membersAdded) {
+        bot.loadSession(message.address, async (error, session: Session) => {
+            wrapAction(ActionDefinitionList.Greeting, message)(session, null, null);
+    
+            session.endDialog();
+        });
+    }
 });
 
 connector.onQuery('searchCmd', (message: IMessage, query, callback) => {

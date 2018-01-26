@@ -102,7 +102,7 @@ Just click any of the buttons below or simply type ‘show elearning’ to get a
     }
 
     public Greeting_Title(userName: string): string {
-        return `Hello ${userName}, nice to see you!`;
+        return `Hello ${userName ? userName : ''}, nice to see you!`;
     }
 
     public get Location(): string {
