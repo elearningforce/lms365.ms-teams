@@ -33,6 +33,12 @@ registerDialog(ActionDefinitionList.ShowCourseCategoryList);
 
 bot.recognizer(recognizer);
 
+bot.dialog('firstRun', (session, args: any, next: any) => {
+    wrapAction(ActionDefinitionList.Greeting)(session, args, next);
+
+    session.endDialog();
+});
+
 connector.onQuery('searchCmd', (message: IMessage, query, callback) => {
     bot.loadSession(message.address, async (error, session: Session) => {
         const searchKeyword = (query.parameters[0].name == 'searchKeyword') ? query.parameters[0].value : null;

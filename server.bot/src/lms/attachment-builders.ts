@@ -77,7 +77,7 @@ export class CourseAttachmentBuilder {
             .title(course.title)
             .subtitle(course.description)
             .text(`
-<span style="font-size:1.2rem; color:#858c98; font-weight:100; width:100%; text-align:center; display:inline-block; padding-top:5px">${index + 1}/${allItemCount < 10 ? allItemCount : 10}</span><br>
+<span style="font-size:1.2rem; color:#858c98; font-weight:100; width:100%; text-align:center; display:inline-block; padding-top:5px">${index + 1}/${allItemCount}</span><br>
 ${fieldsHtml}
             `)
             .images([CardImage.create(session, courseImageUrl)])

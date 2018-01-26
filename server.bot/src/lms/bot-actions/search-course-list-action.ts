@@ -6,6 +6,7 @@ import { ResourceSet } from '../resource-set';
 import { SortDirection } from '../../common/common';
 import { Comparer } from '../../common/comparer';
 import { ArrayHelper } from '../../common/helpers/array-helper';
+import { SessionHelper } from '../../common/helpers/session-helper';
 
 const resourceSet = ResourceSet.instance;
 
@@ -54,23 +55,28 @@ export class SearchCourseListAction implements Action {
     private sendMessageAboutCourses(session: Session, lmsContext: LmsContext, queryableCourseType: CourseType, queryableCategoryName: string, courses: Course[]) {
         if (courses.length) {
             const attachments: IIsAttachment[] = [];
-            const pagedCourses = courses.sort((x, y) => Comparer.instance.compare(x.title, y.title, SortDirection.Descending)).slice(0, 10);
 
-            for (let i = 0; i < pagedCourses.length; i++) {
-                const course = pagedCourses[i];
-                const attachment = lmsContext.attachmentBuilders.courses.buildListItem(course, i, pagedCourses.length);
+            if (!queryableCategoryName) {
+                const pagedCourses = courses.sort((x, y) => Comparer.instance.compare(x.title, y.title, SortDirection.Descending)).slice(0, 10);
 
-                attachments.push(attachment);
-            }
+                for (let i = 0; i < pagedCourses.length; i++) {
+                    const course = pagedCourses[i];
+                    const attachment = lmsContext.attachmentBuilders.courses.buildListItem(course, i, pagedCourses.length);
+    
+                    attachments.push(attachment);
+                }
+    
+                const message = new Message(session)
+                    .attachmentLayout(AttachmentLayout.carousel)
+                    .attachments(attachments);
 
-            const message = new Message(session)
-                .attachmentLayout(AttachmentLayout.carousel)
-                .attachments(attachments);
+                    session.send(message);
 
-            session.send(message);
-
-            if (courses.length > 10 && !queryableCategoryName) {
-                this.sendMessageAboutCategories(session, lmsContext, queryableCourseType, courses);
+                if (courses.length > 10) {
+                    this.sendMessageAboutCategories(session, lmsContext, queryableCourseType, courses);
+                }
+            } else {
+                SessionHelper.sendCards(session, courses, (x, i, count) => lmsContext.attachmentBuilders.courses.buildListItem(x, i, count));
             }
         } else {
             session.send(resourceSet.CourseList_NoItems);
