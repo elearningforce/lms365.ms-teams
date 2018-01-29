@@ -158,10 +158,12 @@ export class GreetingAttachmentBuilder {
             (courseType != CourseType.TrainingPlan)
                 ? `Show ${CommonHelper.escape(resourceSet.getCourseTypeName(courseType))} Courses (${tenantInfo.courseCountByType[courseType]})`
                 : `Show ${resourceSet.TrainingPlans} (${tenantInfo.courseCountByType[courseType]})`;
+        const showCourseCatalogList = (tenantInfo.courseCatalogCount > 1)
+            ? CardAction.imBack(session, ActionDefinitionList.ShowCourseCatalogList.title, `${ActionDefinitionList.ShowCourseCatalogList.title} (${tenantInfo.courseCatalogCount})`)
+            : null;
         const result = [
-            (tenantInfo.courseCatalogCount > 1)
-                ? CardAction.imBack(session, ActionDefinitionList.ShowCourseCatalogList.title, `${ActionDefinitionList.ShowCourseCatalogList.title} (${tenantInfo.courseCatalogCount})`)
-                : null,
+            (this._lmsContext.courseCatalog != null) ? showCourseCatalogList : null,
+            CardAction.imBack(session, ActionDefinitionList.ShowCourseCategoryList.title, ActionDefinitionList.ShowCourseCategoryList.titleFormat(tenantInfo.courseCategoryCount)),
             tenantInfo.courseCountByType[CourseType.ELearning]
                 ? CardAction.imBack(session, messageBuilder(CourseType.ELearning), messageBuilder(CourseType.ELearning))
                 : null,
@@ -174,7 +176,7 @@ export class GreetingAttachmentBuilder {
             tenantInfo.courseCountByType[CourseType.ClassRoom]
                 ? CardAction.imBack(session, CommonHelper.escape(messageBuilder(CourseType.ClassRoom)), messageBuilder(CourseType.ClassRoom))
                 : null,
-            CardAction.imBack(session, ActionDefinitionList.ShowCourseCategoryList.title, ActionDefinitionList.ShowCourseCategoryList.titleFormat(tenantInfo.courseCategoryCount))
+            (this._lmsContext.courseCatalog == null) ? showCourseCatalogList : null,
         ];
 
         return result.filter(x => x != null);

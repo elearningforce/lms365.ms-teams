@@ -53,27 +53,27 @@ export class SearchCourseListAction implements Action {
     }
 
     private sendMessageAboutCourses(session: Session, lmsContext: LmsContext, queryableCourseType: CourseType, queryableCategoryName: string, courses: Course[]) {
+        courses = courses.sort((x, y) => Comparer.instance.compare(x.title, y.title));
+
         if (courses.length) {
             const attachments: IIsAttachment[] = [];
 
             if (!queryableCategoryName) {
-                const pagedCourses = courses.sort((x, y) => Comparer.instance.compare(x.title, y.title, SortDirection.Descending)).slice(0, 10);
-
-                for (let i = 0; i < pagedCourses.length; i++) {
-                    const course = pagedCourses[i];
-                    const attachment = lmsContext.attachmentBuilders.courses.buildListItem(course, i, pagedCourses.length);
-    
-                    attachments.push(attachment);
-                }
-    
-                const message = new Message(session)
-                    .attachmentLayout(AttachmentLayout.carousel)
-                    .attachments(attachments);
-
-                    session.send(message);
-
                 if (courses.length > 10) {
                     this.sendMessageAboutCategories(session, lmsContext, queryableCourseType, courses);
+                } else {
+                    for (let i = 0; i < courses.length; i++) {
+                        const course = courses[i];
+                        const attachment = lmsContext.attachmentBuilders.courses.buildListItem(course, i, courses.length);
+
+                        attachments.push(attachment);
+                    }
+
+                    const message = new Message(session)
+                        .attachmentLayout(AttachmentLayout.carousel)
+                        .attachments(attachments);
+
+                    session.send(message);
                 }
             } else {
                 SessionHelper.sendCards(session, courses, (x, i, count) => lmsContext.attachmentBuilders.courses.buildListItem(x, i, count));
