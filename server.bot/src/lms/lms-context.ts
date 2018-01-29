@@ -47,6 +47,10 @@ export class LmsContext {
         return this.userStorage.get(CommonHelper.Keys.CourseCatalog);
     }
 
+    public set courseCatalog(value: CourseCatalog) {
+        this.userStorage.set(CommonHelper.Keys.CourseCatalog, value);
+    }
+
     public get environmentConfig(): EnvironmentConfig {
         return this._props.environmentConfig;
     }

@@ -124,6 +124,12 @@ export class CourseCategoryStorage extends StorageBase<CourseCategory> {
     public async getAll(): Promise<CourseCategory[]> {
         return this.getModels(CommonHelper.Urls.CourseCategory.getAll(this.courseCatalogId));
     }
+
+    public async getCount(): Promise<number> {
+        const url = CommonHelper.Urls.CourseCategory.getCount(this.courseCatalogId);
+
+        return this.lmsContext.queryExecuter.execute({ url: url }).then(x => parseInt(x as string));
+    }
 }
 
 export class TenantInfoStorage extends StorageBase<TenantInfo> {
@@ -135,6 +141,7 @@ export class TenantInfoStorage extends StorageBase<TenantInfo> {
         const courseStorage = this.lmsContext.modelStorages.courses;
         const value = await Promise.all([
             this.lmsContext.modelStorages.courseCatalogs.getCount(),
+            this.lmsContext.modelStorages.courseCategories.getCount(),
             courseStorage.getCountByType(CourseType.ClassRoom),
             courseStorage.getCountByType(CourseType.ELearning),
             courseStorage.getCountByType(CourseType.TrainingPlan),
@@ -143,11 +150,12 @@ export class TenantInfoStorage extends StorageBase<TenantInfo> {
 
         return {
             courseCatalogCount: value[0],
+            courseCategoryCount: value[1],
             courseCountByType: {
-                [CourseType.ClassRoom]: value[1],
-                [CourseType.ELearning]: value[2],
-                [CourseType.TrainingPlan]: value[3],
-                [CourseType.Webinar]: value[4]
+                [CourseType.ClassRoom]: value[2],
+                [CourseType.ELearning]: value[3],
+                [CourseType.TrainingPlan]: value[4],
+                [CourseType.Webinar]: value[5]
             }
         };
     }

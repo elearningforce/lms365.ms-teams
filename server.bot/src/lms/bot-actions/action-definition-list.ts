@@ -42,6 +42,7 @@ export class ActionDefinitionList {
     public static ShowCourseCategoryList: ActionDefinition = {
         action: new SearchCourseCategoryListAction(),
         key: 'ShowCourseCategoryList',
-        title: 'Show Course Categories'
+        title: 'Show Course Categories',
+        titleFormat: (count: number) => `Show Course Categories (${count})`
     };
 }

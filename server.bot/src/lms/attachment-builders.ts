@@ -104,8 +104,7 @@ export class CourseCatalogAttachmentBuilder {
 <span style="font-size:1.2rem; color:#858c98; font-weight:100; width:100%; text-align:center; display:inline-block; padding-top:5px">${index + 1}/${allItemCount}</span><br>
             `)
             .buttons([
-                CardAction.imBack(session, ActionDefinitionList.SelectCourseCatalog.titleFormat(courseCatalog), ActionDefinitionList.SelectCourseCatalog.title),
-                CardAction.openUrl(session, DeepLinkBuilder.buildCourseCatalogLink(courseCatalog.url), 'View')
+                CardAction.imBack(session, ActionDefinitionList.SelectCourseCatalog.titleFormat(courseCatalog), ActionDefinitionList.SelectCourseCatalog.title)
             ]);
     }
 }
@@ -175,7 +174,7 @@ export class GreetingAttachmentBuilder {
             tenantInfo.courseCountByType[CourseType.ClassRoom]
                 ? CardAction.imBack(session, CommonHelper.escape(messageBuilder(CourseType.ClassRoom)), messageBuilder(CourseType.ClassRoom))
                 : null,
-            CardAction.imBack(session, ActionDefinitionList.ShowCourseCategoryList.title, ActionDefinitionList.ShowCourseCategoryList.title)
+            CardAction.imBack(session, ActionDefinitionList.ShowCourseCategoryList.title, ActionDefinitionList.ShowCourseCategoryList.titleFormat(tenantInfo.courseCategoryCount))
         ];
 
         return result.filter(x => x != null);

@@ -55,6 +55,7 @@ export interface Room {
 
 export interface TenantInfo {
     courseCatalogCount: number;
+    courseCategoryCount: number;
     courseCountByType: { [type: number]: number };
 }
 
