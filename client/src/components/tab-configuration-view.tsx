@@ -207,13 +207,13 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         }
         const environmentConfig = await EnvironmentConfigProvider.instance.getById(this.tenantId);
         const escapedUrl = encodeURIComponent(url.replace("'", "''"));
-        const requestUrl = `${environmentConfig.apiUrl}/odata/v2/Courses?$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${escapedUrl}'`;        
+        const requestUrl = `${environmentConfig.apiUrl}/odata/v2/Courses?$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${escapedUrl}' and CourseCatalogId ne null`;
         return await $.ajax(
             {
                 url: requestUrl,
                 headers: { Authorization: 'Bearer ' + this.accessToken },
             })
-            .then(x => {                
+            .then(x => {
                 if (x && x.value && x.value.length) {
                     return true;
                 }
