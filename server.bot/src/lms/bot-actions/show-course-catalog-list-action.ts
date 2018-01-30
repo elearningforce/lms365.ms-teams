@@ -1,8 +1,6 @@
-import { AttachmentLayout, Message, Session, EntityRecognizer, IIsAttachment } from 'botbuilder';
+import { Session } from 'botbuilder';
 import { Action } from './action-definition';
 import { LmsContext } from '../lms-context';
-import { Course, CourseCatalog } from '../models';
-import { ArrayHelper } from '../../common/helpers/array-helper';
 import { SessionHelper } from '../../common/helpers/session-helper';
 import { Comparer } from '../../common/comparer';
 

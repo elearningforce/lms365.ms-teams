@@ -1,7 +1,6 @@
 import { Session } from 'botbuilder';
 import * as requestExecutor from 'request-promise';
 import { EnvironmentConfigProvider as EnvironmentConfigProviderBase, Storage, Query, QueryExecuter as QueryExecuterBase } from 'ef.lms365';
-import { UserStorage } from './user-storage';
 
 class QueryExecuter implements QueryExecuterBase {
     public execute(query: Query): Promise<any> {

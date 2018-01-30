@@ -1,11 +1,9 @@
-import { AppInfo, AppType, EnvironmentConfig } from 'ef.lms365';
+import { AppType, EnvironmentConfig } from 'ef.lms365';
 import { Course, CourseType } from '../models';
 
 const courseUrlQueryParameters = '$select=CEU,CourseID,CourseType,Description,Duration,Id,ImageUrl,LongDescription,Title,Rating&$expand=Admins,Categories,CourseSessions,SharepointWeb,Rating';
 
 function getFilterByCourseCatalogId(courseCatalogId: string) {
-    console.log(courseCatalogId);
-
     return courseCatalogId ? `CourseCatalogId eq ${encodeURIComponent(courseCatalogId)} and ` : '';
 }
 

@@ -1,12 +1,10 @@
-import { CardAction, CardImage, IAttachment, IIsAttachment, ICardAction, IIsCardAction, Message, Session, ThumbnailCard, HeroCard } from 'botbuilder';
-import { AppInfo, AppType } from 'ef.lms365';
+import { CardAction, CardImage, IAttachment, IIsAttachment, ICardAction, IIsCardAction, Session, ThumbnailCard, HeroCard } from 'botbuilder';
 import { ActionDefinitionList } from './bot-actions/action-definition-list';
 import { LmsContext } from './lms-context';
 import { Course, CourseCatalog, CourseType, CourseCategory, TenantInfo } from './models';
 import { DeepLinkBuilder } from './deep-link-builder';
 import { ResourceSet } from './resource-set';
 import { CommonHelper } from './helpers/common-helper';
-import { TenantInfoStorage } from './model-storages';
 
 const courseFields = CommonHelper.Fields.Course;
 const resourceSet = ResourceSet.instance;

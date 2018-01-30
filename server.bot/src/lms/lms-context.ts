@@ -1,10 +1,10 @@
-import { IEvent, IMessage, Session } from 'botbuilder';
+import { IEvent, Session } from 'botbuilder';
 import { EnvironmentConfig } from 'ef.lms365';
 import { AttachmentBuilderFactory } from './attachment-builders';
 import { ModelCreator } from './model-creator';
 import { ModelFilterFactory } from './model-filters';
 import { ModelStorageFactory } from './model-storages';
-import { ModelMetadataProviderFactory, ModelMetadataProvider } from './model-metadata-providers';
+import { ModelMetadataProviderFactory } from './model-metadata-providers';
 import { CourseCatalog } from './models';
 import { QueryExecuter } from './query-executer';
 import { UserStorage } from './user-storage';

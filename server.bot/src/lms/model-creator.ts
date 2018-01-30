@@ -6,7 +6,6 @@ import { Formatter } from '../common/formatter';
 export class ModelCreator {
     private _formatter: Formatter;
     private _modelFilter: ModelFilterFactory;
-    private static _statusMap;
 
     public constructor(formatter?: Formatter, modelFilter?: ModelFilterFactory) {
         this._formatter = formatter;
@@ -14,14 +13,6 @@ export class ModelCreator {
     }
 
     public createCourse(source: any): Course {
-        const publishing = source.Publishing
-            ? {
-                endDate: this.formatter.parseDate(source.Publishing.EndDate),
-                isEnabled: source.Publishing.IsEnabled,
-                startDate: this.formatter.parseDate(source.Publishing.StartDate)
-            }
-            : null;
-
         return {
             admins: source.Admins ? source.Admins.map(x => this.createUser(x)) : [],
             categories: source.Categories ? source.Categories.map(x => this.createCourseCategory(x)) : [],

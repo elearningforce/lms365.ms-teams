@@ -1,12 +1,10 @@
 import * as env from 'dotenv-extended';
 import * as restify from 'restify';
-import { IMessage, Message, Session } from 'botbuilder';
 import { TeamsChatConnector } from 'botbuilder-teams';
 import { Bot } from './bot';
 import { LuisRecognizer } from './luis-recognizer';
-import { ActionDefinition, wrapAction } from './lms/bot-actions/action-definition';
+import { wrapAction } from './lms/bot-actions/action-definition';
 import { ActionDefinitionList } from './lms/bot-actions/action-definition-list';
-import { LmsContextProvider } from './lms/lms-context-provider';
 
 env.load();
 

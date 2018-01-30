@@ -1,7 +1,6 @@
-import { Message, Session, EntityRecognizer } from 'botbuilder';
+import { Session } from 'botbuilder';
 import { Action } from './action-definition';
 import { LmsContext } from '../lms-context';
-import { Course } from '../models';
 import { ResourceSet } from '../resource-set';
 
 const resourceSet = ResourceSet.instance;

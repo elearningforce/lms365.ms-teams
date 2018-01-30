@@ -1,4 +1,4 @@
-import { IConnector, IConversationUpdate, IDialogWaterfallStep, IMessage, Message, Session, UniversalBot, ThumbnailCard } from 'botbuilder';
+import { IConnector, IConversationUpdate, IDialogWaterfallStep, IMessage, Session, UniversalBot } from 'botbuilder';
 import { ComposeExtensionResponse, TeamsChatConnector } from 'botbuilder-teams';
 import { ActionDefinition, wrapAction } from './lms/bot-actions/action-definition';
 import { ActionDefinitionList } from './lms/bot-actions/action-definition-list';

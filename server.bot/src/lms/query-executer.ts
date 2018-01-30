@@ -1,8 +1,7 @@
-import { IChatConnectorAddress, IMessage, Session } from 'botbuilder';
+import { IChatConnectorAddress } from 'botbuilder';
 import { ChannelAccount, TeamsChatConnector } from 'botbuilder-teams';
 import * as requestExecutor from 'request-promise';
-import { Storage, Query } from 'ef.lms365';
-import { EnvironmentConfigProvider } from './environment-config-provider';
+import { Query } from 'ef.lms365';
 import { LmsContext } from './lms-context';
 import { CommonHelper } from './helpers/common-helper';
 import { UserToken, UserTokenHelper } from './helpers/user-token-helper';
@@ -43,12 +42,14 @@ export abstract class QueryExecuterByContext/* implements QueryExecuter*/ {
                     .then(x => {
                         this.token = x;
                         this._tokenPromise = null;
+
+                        return x;
                     });
             }
 
-            const token = await this._tokenPromise;
+            await this._tokenPromise;
 
-            this.executeWithContext<T>(query);
+            return this.executeWithContext<T>(query);
         }
     }
 
@@ -79,19 +80,22 @@ export class QueryExecuter extends QueryExecuterByContext {
             uri: this._lmsContext.environmentConfig.apiUrl + query.url
         };
 
+        console.log('Query:');
+        console.dir(options);
+
         return await requestExecutor(options);
     }
 
-    protected getToken(query: Query): Promise<any> {
+    protected async getToken(query: Query): Promise<any> {
         return new Promise((resolve: (input: any) => void, reject: (reason?: any) => void) => {
             const lmsContext = this._lmsContext;
-            const message = this._lmsContext.event;
+            const event = this._lmsContext.event;
 
-            const conversationId = message.address.conversation.id;
-            const serviceUrl = (message.address as IChatConnectorAddress).serviceUrl;
-            const connecor = (lmsContext.session.connector as TeamsChatConnector);
+            const conversationId = event.address.conversation.id;
+            const serviceUrl = (event.address as IChatConnectorAddress).serviceUrl;
+            const connector = (lmsContext.session.connector as TeamsChatConnector);
 
-            connecor.fetchMembers(serviceUrl, conversationId, (error, members: ChannelAccount[]) => {
+            connector.fetchMembers(serviceUrl, conversationId, (error, members: ChannelAccount[]) => {
                 if (error) {
                     reject(error);
                 } else {
@@ -102,6 +106,9 @@ export class QueryExecuter extends QueryExecuterByContext {
                             objectId: members[0].objectId
                         }
                     };
+
+                    console.log('User token:');
+                    console.dir(userToken);
 
                     resolve(userToken);
                 }
