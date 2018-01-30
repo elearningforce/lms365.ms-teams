@@ -10,7 +10,6 @@ const resourceSet = ResourceSet.instance;
 export class SelectCourseCatalogAction implements Action {
     public async handle(session: Session, lmsContext: LmsContext, args: any) {
         const urlEntity = EntityRecognizer.findEntity(args.intent.entities, 'builtin.url');
-        const message = lmsContext.message;
 
         if (urlEntity) {
             const url = decodeURI((urlEntity as any).entity);

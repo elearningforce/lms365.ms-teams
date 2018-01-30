@@ -11,14 +11,14 @@ import { SessionHelper } from '../../common/helpers/session-helper';
 const resourceSet = ResourceSet.instance;
 
 function getCourseType(value: string): CourseType {
-    switch (value) {
-        case 'e-Learning':
+    switch (value.toLowerCase()) {
+        case 'e-learning':
             return CourseType.ELearning;
-        case 'Webinar':
+        case 'webinar':
             return CourseType.Webinar;
-        case 'Training Plan':
+        case 'training plan':
             return CourseType.TrainingPlan;
-        case 'Classroom & Blended':
+        default:
             return CourseType.ClassRoom;
     }
 }
@@ -88,7 +88,7 @@ export class SearchCourseListAction implements Action {
         const courseTypeEntity = EntityRecognizer.findEntity(args.intent.entities, 'CourseType');
         const categoryName: string = categoryEntity ? (categoryEntity as any).entity : null;
         const courseType: CourseType = courseTypeEntity
-            ? getCourseType((courseTypeEntity as any).resolution.values[0])
+            ? getCourseType((courseTypeEntity as any).resolution ? (courseTypeEntity as any).resolution.values[0] : courseTypeEntity.entity)
             : null;
         let promise: Promise<Course[]>;
 

@@ -30,8 +30,11 @@ export class ModelCreator {
             duration: source.Duration,
             id: source.Id,
             imageUrl: source.ImageUrl,
+            isDeleted: source.IsDeleted,
+            isPublished: source.IsPublished,
             longDescription: source.LongDescription,
             points: source.CEU,
+            showInCatalog: source.ShowInCatalog,
             title: source.Title,
             type: EnumHelper.parseValue<CourseType>(CourseType, source.CourseType),
             url: source.SharepointWeb ? source.SharepointWeb.Url : (source.Web ? source.Web.Url : null),
@@ -55,7 +58,9 @@ export class ModelCreator {
     public createCourseCategory(source: any): CourseCategory {
         return source
             ? {
-                courses: source.Courses ? source.Courses.map(x => this.createCourse(x)) : null,
+                courses: source.Courses
+                    ? source.Courses.map(x => this.createCourse(x)).filter(x => !x.isDeleted && x.isPublished && x.showInCatalog)
+                    : null,
                 id: source.Id,
                 name: source.Name
             }

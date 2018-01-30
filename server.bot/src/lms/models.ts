@@ -1,4 +1,8 @@
-export interface Course {
+export interface MarkAsDeleted {
+    isDeleted: boolean;
+}
+
+export interface Course extends MarkAsDeleted {
     admins: User[];
     categories: CourseCategory[];
     courseId?: string;
@@ -7,8 +11,10 @@ export interface Course {
     duration?: string;
     id?: string;
     imageUrl?: string;
+    isPublished?: boolean;
     longDescription?: string;
     points?: string;
+    showInCatalog?: boolean;
     type: CourseType;
     title: string;
     url: string;

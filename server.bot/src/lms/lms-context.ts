@@ -1,4 +1,4 @@
-import { IMessage, Session } from 'botbuilder';
+import { IEvent, IMessage, Session } from 'botbuilder';
 import { EnvironmentConfig } from 'ef.lms365';
 import { AttachmentBuilderFactory } from './attachment-builders';
 import { ModelCreator } from './model-creator';
@@ -13,7 +13,7 @@ import { Formatter } from '../common/formatter';
 
 interface LmsContextProps {
     environmentConfig: EnvironmentConfig;
-    message: IMessage;
+    event: IEvent;
     session: Session;
     userStorage: UserStorage;
 }
@@ -55,8 +55,8 @@ export class LmsContext {
         return this._props.environmentConfig;
     }
 
-    public get message(): IMessage {
-        return this._props.message;
+    public get event(): IEvent {
+        return this._props.event;
     }
 
     public get modelCreator(): ModelCreator {
@@ -76,7 +76,7 @@ export class LmsContext {
     }
 
     public get tenantId(): string {
-        return this.message.sourceEvent.tenant.id;
+        return this.event.sourceEvent.tenant.id;
     }
 
     public get queryExecuter(): QueryExecuter {

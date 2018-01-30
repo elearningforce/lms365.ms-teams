@@ -81,10 +81,10 @@ export class CommonHelper {
         },
         CourseCategory: {
             getAll: (courseCatalogId: string) => {
-                return `odata/v2/CourseCategories?$expand=Courses($select=Id)&$filter=${getFilterByCourseCatalogId(courseCatalogId)}Courses/any(x:x/IsPublished eq true and x/ShowInCatalog eq true)`;
+                return `odata/v2/CourseCategories?$expand=Courses($select=Id,IsDeleted,IsPublished,ShowInCatalog)&$filter=${getFilterByCourseCatalogId(courseCatalogId)}Courses/any(x:x/IsPublished eq true and x/ShowInCatalog eq true and x/IsDeleted eq false)`;
             },
             getCount: (courseCatalogId: string) => {
-                return `odata/v2/CourseCategories/$count?$expand=Courses($select=Id)&$filter=${getFilterByCourseCatalogId(courseCatalogId)}Courses/any(x:x/IsPublished eq true and x/ShowInCatalog eq true)`;
+                return `odata/v2/CourseCategories/$count?$expand=Courses($select=Id)&$filter=${getFilterByCourseCatalogId(courseCatalogId)}Courses/any(x:x/IsPublished eq true and x/ShowInCatalog eq true and x/IsDeleted eq false)`;
             }
         }
     }

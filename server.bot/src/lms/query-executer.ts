@@ -85,7 +85,7 @@ export class QueryExecuter extends QueryExecuterByContext {
     protected getToken(query: Query): Promise<any> {
         return new Promise((resolve: (input: any) => void, reject: (reason?: any) => void) => {
             const lmsContext = this._lmsContext;
-            const message = this._lmsContext.message;
+            const message = this._lmsContext.event;
 
             const conversationId = message.address.conversation.id;
             const serviceUrl = (message.address as IChatConnectorAddress).serviceUrl;

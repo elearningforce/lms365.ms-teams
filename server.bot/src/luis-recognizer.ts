@@ -1,5 +1,53 @@
 import { LuisRecognizer as LuisRecognizerBase, IRecognizeContext, IIntentRecognizerResult } from 'botbuilder';
-import { debug, error, debuglog } from 'util';
+
+const predefinedCommnads = [
+    {
+        resultCreator: (format: RegExp, message: string) => {
+            const regexp = new RegExp(format);
+            const matchResult = regexp.exec(message);
+
+            return {
+                entities: [
+                    {
+                        entity: matchResult[1],
+                        type: 'CourseType'
+                    },
+                    {
+                        entity: matchResult[2],
+                        type: 'Category',
+                    }
+                ],
+                intent: 'SearchCourseList',
+                intents: [
+                    { intent: 'SearchCourseList', score: 1 }
+                ],
+                score: 1
+            };
+        },
+        format: /Show (.*) Courses with (.*) category/gi
+    },
+    {
+        resultCreator: (format: RegExp, message: string) => {
+            const regexp = new RegExp(format);
+            const matchResult = regexp.exec(message);
+
+            return {
+                entities: [
+                    {
+                        entity: matchResult[1],
+                        type: 'Category',
+                    }
+                ],
+                intent: 'SearchCourseList',
+                intents: [
+                    { intent: 'SearchCourseList', score: 1 }
+                ],
+                score: 1
+            };
+        },
+        format: /Show Courses with (.*) category/gi
+    }
+];
 
 export class LuisRecognizer extends LuisRecognizerBase {
     private _cache: { [key: string]: IIntentRecognizerResult } = {};
@@ -13,6 +61,21 @@ export class LuisRecognizer extends LuisRecognizerBase {
 
             console.log(`'${key}' - from cache.`);
         } else {
+            for (const predefinedCommnad of predefinedCommnads) {
+                const regexp = new RegExp(predefinedCommnad.format);
+
+                if (regexp.test(key)) {
+                    const result = predefinedCommnad.resultCreator(predefinedCommnad.format, key);
+
+                    callback(null, result);
+
+                    console.log('Predefined command:');
+                    console.dir(result);
+
+                    return;
+                }
+            }
+
             super.recognize(context, (error: Error, result: IIntentRecognizerResult) => {
                 console.dir(result);
 

@@ -156,8 +156,10 @@ export class GreetingAttachmentBuilder {
     private createButtons(session: Session, tenantInfo: TenantInfo): ICardAction[] | IIsCardAction[] {
         const messageBuilder = (courseType: CourseType) =>
             (courseType != CourseType.TrainingPlan)
-                ? `Show ${CommonHelper.escape(resourceSet.getCourseTypeName(courseType))} Courses (${tenantInfo.courseCountByType[courseType]})`
-                : `Show ${resourceSet.TrainingPlans} (${tenantInfo.courseCountByType[courseType]})`;
+                ? `Show ${CommonHelper.escape(resourceSet.getCourseTypeName(courseType))} Courses`
+                : `Show ${resourceSet.TrainingPlans}`;
+        const titleBuilder = (courseType: CourseType) =>
+            `${messageBuilder(courseType)} (${tenantInfo.courseCountByType[courseType]})`;
         const showCourseCatalogList = (tenantInfo.courseCatalogCount > 1)
             ? CardAction.imBack(session, ActionDefinitionList.ShowCourseCatalogList.title, `${ActionDefinitionList.ShowCourseCatalogList.title} (${tenantInfo.courseCatalogCount})`)
             : null;
@@ -165,16 +167,16 @@ export class GreetingAttachmentBuilder {
             (this._lmsContext.courseCatalog != null) ? showCourseCatalogList : null,
             CardAction.imBack(session, ActionDefinitionList.ShowCourseCategoryList.title, ActionDefinitionList.ShowCourseCategoryList.titleFormat(tenantInfo.courseCategoryCount)),
             tenantInfo.courseCountByType[CourseType.ELearning]
-                ? CardAction.imBack(session, messageBuilder(CourseType.ELearning), messageBuilder(CourseType.ELearning))
+                ? CardAction.imBack(session, messageBuilder(CourseType.ELearning), titleBuilder(CourseType.ELearning))
                 : null,
             tenantInfo.courseCountByType[CourseType.Webinar]
-                ? CardAction.imBack(session, messageBuilder(CourseType.Webinar), messageBuilder(CourseType.Webinar))
+                ? CardAction.imBack(session, messageBuilder(CourseType.Webinar), titleBuilder(CourseType.Webinar))
                 : null,
             tenantInfo.courseCountByType[CourseType.TrainingPlan]
-                ? CardAction.imBack(session, messageBuilder(CourseType.TrainingPlan), messageBuilder(CourseType.TrainingPlan))
+                ? CardAction.imBack(session, messageBuilder(CourseType.TrainingPlan), titleBuilder(CourseType.TrainingPlan))
                 : null,
             tenantInfo.courseCountByType[CourseType.ClassRoom]
-                ? CardAction.imBack(session, CommonHelper.escape(messageBuilder(CourseType.ClassRoom)), messageBuilder(CourseType.ClassRoom))
+                ? CardAction.imBack(session, CommonHelper.escape(messageBuilder(CourseType.ClassRoom)), titleBuilder(CourseType.ClassRoom))
                 : null,
             (this._lmsContext.courseCatalog == null) ? showCourseCatalogList : null,
         ];
@@ -184,7 +186,7 @@ export class GreetingAttachmentBuilder {
 
     public build(tenantInfo: TenantInfo): IAttachment | IIsAttachment {
         const session = this._lmsContext.session;
-        const user = this._lmsContext.message.user;
+        const user = this._lmsContext.event.user;
 
         return new ThumbnailCard(session)
             .title(resourceSet.Greeting_Title(user.name))

@@ -37,7 +37,7 @@ export class ResourceSet {
     }
 
     public get CourseCategoryList_Title(): string {
-        return 'Good news, I found the following categories for you, now just select the category you need!.';
+        return 'Good news, I found the following categories for you, now just select the category you need!';
     }
 
     public get CEU_Points_Field(): string {
