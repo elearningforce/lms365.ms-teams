@@ -26,6 +26,6 @@ export const wrapAction = (actionDefinition: ActionDefinition, event?: IEvent) =
             actionDefinition.action.handle(session, lmsContext, args, next);
         } catch (error) {
             console.dir(error);
-            session.send(resourceSet.TenantNotAccessible);
+            session.send(resourceSet.TenantNotAccessibleAsHtml);
         }
     };

@@ -49,9 +49,11 @@ export class Bot extends UniversalBot {
         
                 callback(null, response, 200);
             } catch (error) {
-                console.log(error.message);
+                const response = ComposeExtensionResponse.message().text(resourceSet.TenantNotAccessible).toResponse();
 
-                callback(new Error(resourceSet.TenantNotAccessible), null, 500);
+                callback(null, response, 200);
+
+                console.log(error.message);
             }
         });
     }
