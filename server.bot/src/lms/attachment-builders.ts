@@ -44,7 +44,7 @@ export class CourseAttachmentBuilder {
             .buttons([
                 CardAction.openUrl(
                     session, DeepLinkBuilder.buildCourseLink(course.url),
-                    (course.type != CourseType.TrainingPlan) ? resourceSet.ViewTrainingPlan : resourceSet.ViewTrainingPlan)
+                    (course.type != CourseType.TrainingPlan) ? resourceSet.ViewCourse : resourceSet.ViewTrainingPlan)
             ]);
     }
 
@@ -127,7 +127,7 @@ export class CourseCategoryAttachmentBuilder {
         });
 
         return new ThumbnailCard(session)
-            .title(title)
+            .subtitle(title)
             .buttons(buttons);
     }
 
@@ -139,7 +139,7 @@ export class CourseCategoryAttachmentBuilder {
         });
 
         return new ThumbnailCard(session)
-            .title(title)
+            .subtitle(title)
             .buttons(buttons);
     }
 }
