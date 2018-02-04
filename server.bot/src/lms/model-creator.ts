@@ -95,7 +95,7 @@ export class ModelCreator {
         return this._formatter = this._formatter || new Formatter(null);
     }
 
-    private get modelFilter(): ModelFilterFactory {
+    protected get modelFilter(): ModelFilterFactory {
         return this._modelFilter = this._modelFilter || new ModelFilterFactory();
     }
 }
