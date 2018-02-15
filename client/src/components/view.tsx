@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Context, ThemeStyle, TeamsComponentContext, ConnectedComponent, Panel, PanelBody, Surface } from 'msteams-ui-components-react';
 import { AuthenticationConfig } from 'ef.lms365';
+import { Loading } from './loading';
 import { LoginButton } from './login-button';
 import { EnvironmentConfigProvider } from '../infrastructure/environment-config-provider';
 import { Helper } from '../infrastructure/helper';
@@ -178,7 +179,7 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                                 }} />
                             </TeamsComponentContext>
                         )
-                        : null
+                        : <Loading />
                 }
             </div>
         );

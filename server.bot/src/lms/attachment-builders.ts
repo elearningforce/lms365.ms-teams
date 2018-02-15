@@ -186,10 +186,14 @@ export class GreetingAttachmentBuilder {
         const session = this._lmsContext.session;
         const user = this._lmsContext.event.user;
 
-        return new ThumbnailCard(session)
-            .title(resourceSet.Greeting_Title(user.name))
-            .text(resourceSet.Greeting)
-            .buttons(this.createButtons(session, tenantInfo));
+        return tenantInfo.courseCatalogCount
+            ? new ThumbnailCard(session)
+                .title(resourceSet.Greeting_Title(user.name))
+                .text(resourceSet.Greeting)
+                .buttons(this.createButtons(session, tenantInfo))
+            : new ThumbnailCard(session)
+                .title(resourceSet.Greeting_Title(user.name))
+                .text(resourceSet.NoCourseCatalog);
     }
 
     public buildShortMode(tenantInfo: TenantInfo, content: string): IAttachment | IIsAttachment {

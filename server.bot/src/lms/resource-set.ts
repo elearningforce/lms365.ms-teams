@@ -109,6 +109,10 @@ Just click any of the buttons below or simply type ‘show elearning’ to get a
         return 'Location';
     }
 
+    public get NoCourseCatalog(): string {
+        return 'Doh, it would appear that you do not have the Course Catalog add-in installed on your Office 365 Tenant, click <a href="https://helpcenter.elearningforce.com/hc/en-us/articles/115004253305-LMS-365-Course-Creator-Catalog-Add-in-User-Guide">here</a> to view the LMS365 Course Catalog User Guide.';
+    }
+
     public get MoreThanOneDate(): string {
         return 'Multiple Dates';
     }

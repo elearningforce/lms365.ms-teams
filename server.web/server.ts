@@ -55,7 +55,9 @@ const server = http.createServer((request, response) => {
         <script src="https://statics.teams.microsoft.com/sdk/v1.0/js/MicrosoftTeams.js"></script>                
     </head>
     <body>
-        <div id="main" />
+        <div id="main">
+            <span style="font-family: 'Segoe UI', Tahoma, Helvetica, Sans-Serif; font-size: 1.125rem; line-height: 2rem; color:rgba(22,35,58,0.74);">We're getting things ready for you, just a moment...</span>
+        </div>
 
         <script>
             window.process = { env: { NODE_ENV: '${process.env.NODE_ENV}' } };
