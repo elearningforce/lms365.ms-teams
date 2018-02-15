@@ -2,7 +2,7 @@ import { Encryptor } from '../encryptor';
 
 interface User {
     objectId: string;
-    loginName: string;
+    loginName?: string;
 }
 
 export interface UserToken {

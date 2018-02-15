@@ -97,7 +97,20 @@ export class QueryExecuter extends QueryExecuterByContext {
 
             connector.fetchMembers(serviceUrl, conversationId, (error, members: ChannelAccount[]) => {
                 if (error) {
-                    reject(error);
+                    const objectId = (event.address.user as any).aadObjectId;
+
+                    if (objectId) {
+                        const userToken: UserToken = {
+                            tenantId: lmsContext.tenantId,
+                            user: {
+                                objectId: objectId
+                            }
+                        };
+
+                        resolve(userToken);    
+                    } else {
+                        reject(error);
+                    }
                 } else {
                     const userToken: UserToken = {
                         tenantId: lmsContext.tenantId,
