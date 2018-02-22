@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/tedious": "^1.8.32",
     "botbuilder": "^3.13.1",
     "botbuilder-azure": "^3.0.4",
     "botbuilder-teams": "^0.1.6",

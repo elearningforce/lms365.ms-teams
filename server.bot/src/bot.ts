@@ -1,4 +1,5 @@
 import { IConnector, IConversationUpdate, IDialogWaterfallStep, IMessage, Session, UniversalBot } from 'botbuilder';
+import { AzureBotStorage, AzureTableClient } from 'botbuilder-azure';
 import { ComposeExtensionResponse, TeamsChatConnector } from 'botbuilder-teams';
 import { ActionDefinition, wrapAction } from './lms/bot-actions/action-definition';
 import { ActionDefinitionList } from './lms/bot-actions/action-definition-list';
@@ -10,6 +11,8 @@ const resourceSet = ResourceSet.instance;
 export class Bot extends UniversalBot {
     public constructor(connector?: IConnector, defaultDialog?: IDialogWaterfallStep | IDialogWaterfallStep[], libraryName?: string) {
         super(connector, defaultDialog, libraryName);
+
+        this.initializeStorage();
 
         this.registerDialog(ActionDefinitionList.Greeting);
         this.registerDialog(ActionDefinitionList.Help);
@@ -56,6 +59,17 @@ export class Bot extends UniversalBot {
                 console.log(error.message);
             }
         });
+    }
+
+    private initializeStorage() {
+        const storageAccountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
+        const storageAccountKey = process.env.AZURE_STORAGE_ACCOUNT_KEY;
+        const storageTable = 'Conversations';
+
+        const tableClient = new AzureTableClient(storageTable, storageAccountName, storageAccountKey);
+        const botStorage = new AzureBotStorage({ gzipData: false }, tableClient);
+
+        this.set('storage', botStorage);
     }
 
     private registerDialog(actionDefinition: ActionDefinition) {
