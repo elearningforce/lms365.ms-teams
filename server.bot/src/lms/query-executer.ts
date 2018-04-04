@@ -67,7 +67,7 @@ export class QueryExecuter extends QueryExecuterByContext {
     }
 
     protected isTokenValid(token: UserToken): boolean {
-        return token.user && (token.user.loginName != null);
+        return token.user && (token.user.loginName != null) && (token.user.objectId != null);
     }
 
     protected async executeWithContext<T>(query: Query): Promise<T> {
@@ -107,23 +107,27 @@ export class QueryExecuter extends QueryExecuterByContext {
                             }
                         };
 
-                        resolve(userToken);    
+                        resolve(userToken);
                     } else {
                         reject(error);
                     }
                 } else {
-                    const userToken: UserToken = {
-                        tenantId: lmsContext.tenantId,
-                        user: {
-                            loginName: 'i:0#.f|membership|' + members[0].userPrincipalName,
-                            objectId: members[0].objectId
-                        }
-                    };
+                    if (members[0].objectId) {
+                        const userToken: UserToken = {
+                            tenantId: lmsContext.tenantId,
+                            user: {
+                                loginName: 'i:0#.f|membership|' + members[0].userPrincipalName,
+                                objectId: members[0].objectId
+                            }
+                        };
 
-                    console.log('User token:');
-                    console.dir(userToken);
+                        console.log('User token:');
+                        console.dir(userToken);
 
-                    resolve(userToken);
+                        resolve(userToken);
+                    } else {
+                        reject(new Error('User is not identified.'));
+                    }
                 }
             });
         });
