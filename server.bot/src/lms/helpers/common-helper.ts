@@ -68,7 +68,7 @@ export class CommonHelper {
                 const appInfo = environmentConfig.getAppInfo(AppType.CourseCatalog);
 
                 return course.imageUrl
-                    ? `${environmentConfig.apiUrl}courseCatalogImages/getCourseImage?tenantId=${encodeURIComponent(tenantId)}&courseId=${encodeURIComponent(course.id)}`
+                    ? course.imageUrl
                     : `https://${appInfo.host}/images/head_edu.png`;
             }
         },
