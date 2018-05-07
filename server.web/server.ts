@@ -22,6 +22,8 @@ const server = http.createServer((request, response) => {
             response.end();
         });
     } else {
+        const webUrl = parsedUrl.query['webUrl'];
+        let authorizationFrame = webUrl ? `<iframe src="${webUrl}" style="display: none"></iframe>` : '';
         let viewName = fileName;
 
         if (fileName == 'Tab') {
@@ -43,8 +45,12 @@ const server = http.createServer((request, response) => {
             }
         }
 
-        if (!viewName && parsedUrl.query['webUrl']) {
+        if (!viewName && webUrl) {
             viewName = 'Course';
+        }
+
+        if (webUrl) {
+
         }
 
         response.writeHead(200, { 'Content-Type': 'text/html' });
@@ -55,6 +61,8 @@ const server = http.createServer((request, response) => {
         <script src="https://statics.teams.microsoft.com/sdk/v1.0/js/MicrosoftTeams.js"></script>                
     </head>
     <body>
+        ${authorizationFrame}
+
         <div id="main">
             <span style="font-family: 'Segoe UI', Tahoma, Helvetica, Sans-Serif; font-size: 1.125rem; line-height: 2rem; color:rgba(22,35,58,0.74);">We're getting things ready for you, just a moment...</span>
         </div>
