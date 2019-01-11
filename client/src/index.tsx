@@ -29,7 +29,7 @@ export function renderCourseView() {
 }
 
 export function renderCourseCatalogView() {
-    renderWebPartView(WebPartType.CourseCatalogV2);
+    renderWebPartView(WebPartType.CourseCatalog);
 }
 
 export function renderDashboardView() {

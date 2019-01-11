@@ -156,10 +156,9 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                             #lms365 .courseCertificateDownload .course-icon-text { display: none; }
                             #lms365 .lCoursesCertificate a { cursor: default; }
                             .course-certificate a { display: none; }
-                            .course-management-button { display: none; }
-                            .--efLms365Dashboard .k-toolbar .k-button {
-                                display: none !important;
-                            }
+                            .course-management-button, .ef-course-home-page-course-management { display: none; }
+                            .--efLms365Dashboard .k-toolbar .k-button { display: none !important; }
+                            .ef--admin-center-link { display: none; }
                         `
                     }
                 </style>

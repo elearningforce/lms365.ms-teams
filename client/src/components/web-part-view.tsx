@@ -5,13 +5,9 @@ import { AppType, GlobalConfig } from 'ef.lms365';
 import { View } from './view';
 
 export enum WebPartType {
-    Assignments,
     Course,
     CourseCatalog,
-    CourseCatalogV2,
-    CoursePageHeader,
-    Dashboard,
-    Mlap
+    Dashboard
 }
 
 interface WebPartProps {
@@ -19,13 +15,15 @@ interface WebPartProps {
 };
 
 const webPartNameByType = {
-    [WebPartType.Assignments]: 'Assignments',
-    [WebPartType.Course]: 'Course-page',
-    [WebPartType.CourseCatalog]: 'Course-catalog',
-    [WebPartType.CourseCatalogV2]: 'Course-catalog-v2',
-    [WebPartType.CoursePageHeader]: 'Course-page-header',
-    [WebPartType.Dashboard]: 'Dashboard',
-    [WebPartType.Mlap]: 'Mlap'
+    [WebPartType.Course]: 'Course-page-spfx',
+    [WebPartType.CourseCatalog]: 'Course-catalog-spfx',
+    [WebPartType.Dashboard]: 'Dashboard-spfx'
+};
+
+const webPartIdByType = {
+    [WebPartType.Course]: '4AA6D32E-1110-447C-B448-D0D5C8BE7421',
+    [WebPartType.CourseCatalog]: 'C38FA808-FBDD-4C19-A1F0-2F4E20285CCE',
+    [WebPartType.Dashboard]: 'F46BF6D7-FC44-4691-B3EF-56F3BD3B5149',
 };
 
 export class WebPartView extends View<WebPartProps> {
@@ -48,9 +46,10 @@ export class WebPartView extends View<WebPartProps> {
 
     protected renderContent(context: Context): JSX.Element {
         const webPartName = webPartNameByType[this.props.type];
+        const webPartId = webPartIdByType[this.props.type];
 
         return (
-            <div>
+            <div {...{ webpartid: webPartId }}>
                 <div className={`--efLms365${webPartName}`}></div>
                 <div className="--efLms365ScriptLoader" style={{ display: 'none' }}></div>
             </div>

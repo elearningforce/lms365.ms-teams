@@ -75,7 +75,9 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
     private onRadioButtonSelected(viewType: ViewType) {
         const name = viewType == ViewType.Dashboard
             ? 'Dashboard'
-            : '';
+            : viewType == ViewType.CourseCatalog
+                ? 'Course Catalog'
+                : '';
         const url = viewType == ViewType.Dashboard
             ? ''
             : 'https://';
@@ -97,7 +99,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
             } else {
                 webUrl = this.trimUrl(webUrl);
 
-                if (!await this.validateCourseUrl(webUrl)) {
+                if (!await this.validateEntityUrl(webUrl, viewType)) {
                     saveEvent.notifyFailure();
                 }
                 else {
@@ -146,7 +148,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
                 <div style={styles.section}>View:</div>
                 <RadiobuttonGroup>
                     {this.renderRadioButton(ViewType.Dashboard)}
-                    {/* {this.renderRadioButton(ViewType.CourseCatalog)} */}
+                    {this.renderRadioButton(ViewType.CourseCatalog)}
                     {this.renderRadioButton(ViewType.Course)}
                 </RadiobuttonGroup>
                 {this.renderUrlInputSection(styles)}
@@ -200,14 +202,32 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
         return !value || value.indexOf('https://') === 0;
     }
 
-    private async validateCourseUrl(url: string): Promise<boolean> {
+    private async validateEntityUrl(url: string, viewType: ViewType): Promise<boolean> {
         this.setState({ validationMessage: null });
-        if (this.state.viewType == ViewType.Dashboard) {
-            return true;
+
+        switch (viewType) {
+            case ViewType.Course:
+                return this.validateCourseUrl(url);
+            case ViewType.CourseCatalog:
+                return this.validateCourseCatalogUrl(url);
+            default:
+                return Promise.resolve(true);
         }
+    }
+
+    private validateCourseUrl(url: string): Promise<boolean> {
+        return this.validateEntityExists(`/odata/v2/Courses?$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${encodeURIComponent(url.replace("'", "''"))}' and CourseCatalogId ne null`,
+            'Sorry we cannot find a course with that URL in our system. Please recheck the entered value.');
+    }
+
+    private validateCourseCatalogUrl(url: string): Promise<boolean> {
+        return this.validateEntityExists(`/odata/v2/CourseCatalogs?$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${encodeURIComponent(url.replace("'", "''"))}'`,
+            'Sorry we cannot find a course catalog with that URL in our system. Please recheck the entered value.');
+    }
+
+    private async validateEntityExists(requestPath: string, validationMessage: string): Promise<boolean> {
         const environmentConfig = await EnvironmentConfigProvider.instance.getById(this.tenantId);
-        const escapedUrl = encodeURIComponent(url.replace("'", "''"));
-        const requestUrl = `${environmentConfig.apiUrl}/odata/v2/Courses?$expand=SharepointWeb&$filter=SharepointWeb/Url eq '${escapedUrl}' and CourseCatalogId ne null`;
+        const requestUrl = environmentConfig.apiUrl + requestPath;
         return await $.ajax(
             {
                 url: requestUrl,
@@ -217,7 +237,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
                 if (x && x.value && x.value.length) {
                     return true;
                 }
-                this.setState({ validationMessage: 'Sorry we cannot find a course with that URL in our system. Please recheck the entered value.' });
+                this.setState({ validationMessage: validationMessage });
                 return false;
             });
     }
