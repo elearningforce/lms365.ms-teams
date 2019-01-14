@@ -1,11 +1,10 @@
 import * as React from 'react';
+import * as microsoftTeams from '@microsoft/teams-js';
 import { AuthenticationConfig } from 'ef.lms365';
 import { Helper } from '../infrastructure/helper';
 
 export class SignInView extends React.Component {
     public componentDidMount() {
-        const microsoftTeams = (window as any).microsoftTeams;
-
         microsoftTeams.initialize();
         microsoftTeams.getContext(context => {
             const config = Helper.getAdalConfig(context);
@@ -30,10 +29,10 @@ export class SignInView extends React.Component {
                                 microsoftTeams.authentication.notifyFailure(error);
                             }
                         } else {
-                            microsoftTeams.authentication.notifySuccess({
+                            microsoftTeams.authentication.notifySuccess(JSON.stringify({
                                 accessToken: token,
                                 tenantId: authenticationContext.getCachedUser().profile.tid
-                            });
+                            }));
                         }
                     });
                 }

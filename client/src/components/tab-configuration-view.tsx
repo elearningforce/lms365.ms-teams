@@ -1,8 +1,9 @@
 import * as React from 'react';
+import * as microsoftTeams from '@microsoft/teams-js';
+import * as $ from 'jquery';
 import { Context, Input, Radiobutton, RadiobuttonGroup, ThemeStyle, Surface } from 'msteams-ui-components-react';
 import { View } from './view';
 import { EnvironmentConfigProvider } from '../infrastructure/environment-config-provider';
-import * as $ from 'jquery';
 
 enum ViewType {
     Course,
@@ -86,8 +87,6 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
 
     protected initialize() {
         super.initialize();
-
-        const microsoftTeams = (window as any).microsoftTeams;
 
         microsoftTeams.settings.registerOnSaveHandler(async (saveEvent) => {
             const viewType = this.state.viewType;
@@ -185,17 +184,14 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
     }
 
     private validateInput() {
-        const microsoftTeams = (window as any).microsoftTeams;
-        if (microsoftTeams) {
-            let valid = true;
-            if (this.state.renderNameInput && !this.state.name) {
-                valid = false;
-            }
-            if (this.state.viewType != ViewType.Dashboard && (!this.state.url || this.state.url == 'https://' || !this.validateUrlFormat(this.state.url))) {
-                valid = false;
-            }
-            microsoftTeams.settings.setValidityState(valid);
+        let valid = true;
+        if (this.state.renderNameInput && !this.state.name) {
+            valid = false;
         }
+        if (this.state.viewType != ViewType.Dashboard && (!this.state.url || this.state.url == 'https://' || !this.validateUrlFormat(this.state.url))) {
+            valid = false;
+        }
+        microsoftTeams.settings.setValidityState(valid);
     }
 
     private validateUrlFormat(value: string): boolean {

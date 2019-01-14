@@ -58,7 +58,6 @@ const server = http.createServer((request, response) => {
 <html>
     <head>
         <script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.16/js/adal.min.js"></script>
-        <script src="https://statics.teams.microsoft.com/sdk/v1.0/js/MicrosoftTeams.js"></script>                
     </head>
     <body>
         ${authorizationFrame}

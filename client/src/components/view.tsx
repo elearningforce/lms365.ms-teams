@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as microsoftTeams from '@microsoft/teams-js';
 import { Context, ThemeStyle, TeamsComponentContext, ConnectedComponent, Panel, PanelBody, Surface } from 'msteams-ui-components-react';
 import { AuthenticationConfig } from 'ef.lms365';
 import { Loading } from './loading';
@@ -35,8 +36,6 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
     }
 
     protected initialize() {
-        const microsoftTeams = (window as any).microsoftTeams;
-
         microsoftTeams.initialize();
         microsoftTeams.getContext(context => {
             this.initializeMsTeams(context);
@@ -67,12 +66,12 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                 this.setState({ userAuthenticationStatus: UserAuthenticationStatus.NotAuthenticated });
             } else {
                 const cachedUser = authenticationContext.getCachedUser();
-                this.onAuthenticated(token, cachedUser.profile.tid);                
+                this.onAuthenticated(token, cachedUser.profile.tid);
             }
         });
 
         this.setState({ theme: themeByName[context.theme] || ThemeStyle.Light });
-    }    
+    }
 
     protected getRedirectViewUrlFromContext(context: any): string {
         const pathName = window.location.pathname;

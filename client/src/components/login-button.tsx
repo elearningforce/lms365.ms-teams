@@ -1,9 +1,9 @@
 import * as React from 'react';
+import * as microsoftTeams from '@microsoft/teams-js';
 import { Context, PrimaryButton, SecondaryButton, Surface } from 'msteams-ui-components-react';
 
 interface LoginButtonProps {
     context: Context;
-
     onAuthenticate: (result: { accessToken: string, tenantId: string }) => void;
 }
 
@@ -15,15 +15,13 @@ export class LoginButton extends React.Component<LoginButtonProps, any> {
     }
 
     private handleClick() {
-        const microsoftTeams = (window as any).microsoftTeams;
-
         microsoftTeams.authentication.authenticate({
             height: 400,
             failureCallback: (err) => {
                 alert('Error: ' + err);
                 console.log(err);
             },
-            successCallback: this.props.onAuthenticate,
+            successCallback: x => this.props.onAuthenticate(JSON.parse(x)),
             url: '/SignIn',
             width: 400
         });
