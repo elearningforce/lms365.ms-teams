@@ -50,7 +50,7 @@ export class WebPartView extends View<WebPartProps> {
 
         return (
             <div {...{ webpartid: webPartId }}>
-                <div className={`--efLms365${webPartName}`}></div>
+                <div className={`--efLms365${webPartName} ef-teams`}></div>
                 <div className="--efLms365ScriptLoader" style={{ display: 'none' }}></div>
             </div>
         );
