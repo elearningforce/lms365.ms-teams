@@ -42,7 +42,7 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
         });
     }
 
-    protected initializeMsTeams(context: any) {
+    protected initializeMsTeams(context: microsoftTeams.Context) {
         const redirectViewUrl = this.getRedirectViewUrlFromContext(context);
         if (redirectViewUrl) {
             document.location.href = redirectViewUrl;
@@ -55,7 +55,8 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
         if (context) {
             window['_spPageContextInfo'] = {
                 currentCultureName: context.locale,
-                currentUICultureName: context.locale
+                currentUICultureName: context.locale,
+                aadTenantId: context.tid
             };
         }
 
@@ -154,10 +155,11 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                             #lms365 .courseCertificateDownload a { cursor: default; }
                             #lms365 .courseCertificateDownload .course-icon-text { display: none; }
                             #lms365 .lCoursesCertificate a { cursor: default; }
-                            .course-certificate a { display: none; }
-                            .course-management-button, .ef-course-home-page-course-management { display: none; }
-                            .--efLms365Dashboard .k-toolbar .k-button { display: none !important; }
-                            .ef--admin-center-link { display: none; }
+                            .course-certificate a, .ef-course-certificate .ms-link { display: none; } /* Download certificate link on Course Home Page */
+                            .course-management-button, .ef-course-home-page-course-management { display: none; } /* Course Management button in Course Home Page */
+                            .--efLms365Dashboard-spfx .k-toolbar .k-button { display: none !important; } /* Export To Excel button in Dashboard team view */
+                            .pdfButtonContainer { display: none; } /* Export button in Transcript */
+                            .ef--admin-center-link { display: none; } /* Admin Center button in Course Catalog */
                         `
                     }
                 </style>
