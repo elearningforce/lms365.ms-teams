@@ -1,16 +1,15 @@
-import { AuthenticationConfig, GlobalConfig } from 'ef.lms365';
+import { GlobalConfig } from 'ef.lms365';
 
 export class Helper {
     public static getAdalConfig(context: any): adal.Config {
-        const apiHost = GlobalConfig.instance.apiHost;
-        const authenticationConfig = AuthenticationConfig.instance;
-
+        const globalConfig = GlobalConfig.instance;
+        
         return {
             cacheLocation: 'localStorage',
-            clientId: authenticationConfig.clientId,
+            clientId: globalConfig.clientAppId,
             endpoints: {
                 'https://graph.microsoft.com': 'https://graph.microsoft.com',
-                [apiHost]: authenticationConfig.resourceId
+                [globalConfig.discoveryServerUrl]: globalConfig.apiAppId
             },
             extraQueryParameter: '&login_hint=' + encodeURIComponent(context.upn),
             instance: 'https://login.microsoftonline.com/',

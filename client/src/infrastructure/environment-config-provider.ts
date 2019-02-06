@@ -16,6 +16,10 @@ class QueryExecuter implements QueryExecuterBase {
             url: query.url
         });
     }
+    
+    public executeSync<TOutput>(query: Query, converter?: (input: string) => TOutput): TOutput{
+        return null;
+    }
 }
 
 export class EnvironmentConfigProvider extends EnvironmentConfigProviderBase {

@@ -1,0 +1,95 @@
+﻿{
+    "$schema": "https://statics.teams.microsoft.com/sdk/v1.2/manifest/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.2",
+    "id": "F77A284F-120F-40FF-9A67-BDE9420E9453",
+    "version": "1.0.0.0",
+    "packageName": "com.LMS365-dev",
+    "developer": {
+        "name": "ELEARNINGFORCE International",
+        "websiteUrl": "https://www.elearningforce.com/teams",
+        "privacyUrl": "https://www.elearningforce.com/privacy",
+        "termsOfUseUrl": "https://www.elearningforce.com/terms"
+    },
+    "name": {
+        "short": "LMS365 (dev)",
+        "full": "LMS365 (dev) | Learning Management System for the Modern Digital Workplace!"
+    },
+    "description": {
+        "full": "Enable your learners to find, take and track their LMS365 (dev) Training directly inside Teams as well as using our Intelligent BOT to help finding Courses and Training Plans available in your catalogs.",
+        "short": "Easily insert and share training in channels and chats"
+    },
+    "icons": {
+        "outline": "lms365-teams-outline-icon-20x20px.png",
+        "color": "lms365-teams-color-icon-96x96px.png"
+    },
+    "accentColor": "#E16232",
+    "validDomains": [
+        "lms365-msteams-web-dev-ne.azurewebsites.net"
+    ],
+    "staticTabs": [
+        {
+            "contentUrl": "https://lms365-msteams-web-dev-ne.azurewebsites.net/Tab?view=dashboard&LeaderBoard=false&Transcript=false&CoursesEnded=false",
+            "name": "Dashboard",
+            "scopes": [
+                "personal"
+            ],
+            "entityId": "lms365-dev-dashboard"
+        },
+        {
+            "contentUrl": "https://lms365-msteams-web-dev-ne.azurewebsites.net/Tab?view=training",
+            "name": "Training",
+            "scopes": [
+                "personal"
+            ],
+            "entityId": "lms365-training"
+        }        
+
+    ],
+    "bots": [
+        {
+            "botId": "30294224-891c-4ea2-8ad3-07e7464a3a3f",
+            "scopes": [
+                "personal"
+            ],
+            "commandLists": [   
+                {                    
+                    "scopes": [
+                        "personal"
+                    ],
+                    "commands": [
+                        {
+                            "description": "What can I help you with?",
+                            "title": "help"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "configurableTabs": [
+        {
+          "configurationUrl": "https://lms365-msteams-web-dev-ne.azurewebsites.net/TabConfiguration",
+          "canUpdateConfiguration": true,
+          "scopes": [
+            "team"
+          ]
+        }
+    ],
+    "composeExtensions": [
+        {
+            "botId": "30294224-891c-4ea2-8ad3-07e7464a3a3f",
+            "commands": [
+                {
+                    "id": "searchCmd",
+                    "title": "Search course catalog",
+                    "description": "Search the course catalog for courses and training plans",
+                    "initialRun": true,
+                    "parameters": [{
+                        "name": "searchKeyword",
+                        "description": "Enter a search term",
+                        "title": "Keywords"
+                    }]
+                }
+            ]
+        }
+    ]}

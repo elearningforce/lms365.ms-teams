@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as microsoftTeams from '@microsoft/teams-js';
 import { Context, ThemeStyle, TeamsComponentContext, ConnectedComponent, Panel, PanelBody, Surface } from 'msteams-ui-components-react';
-import { AuthenticationConfig } from 'ef.lms365';
+import { GlobalConfig, EnvironmentConfig } from 'ef.lms365';
 import { Loading } from './loading';
 import { LoginButton } from './login-button';
 import { EnvironmentConfigProvider } from '../infrastructure/environment-config-provider';
@@ -17,6 +17,7 @@ enum UserAuthenticationStatus {
 export interface ViewState {
     userAuthenticationStatus?: UserAuthenticationStatus;
     theme?: ThemeStyle;
+    environmentConfig?: EnvironmentConfig;
 }
 
 const themeByName = {
@@ -32,7 +33,11 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
     public constructor(props: any) {
         super(props);
 
-        this.state = { userAuthenticationStatus: UserAuthenticationStatus.Undefined } as any;
+        this.state = {
+            userAuthenticationStatus: UserAuthenticationStatus.Undefined,
+            theme: null,
+            environmentConfig: null
+        } as any;
     }
 
     protected initialize() {
@@ -49,7 +54,7 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
             return;
         }
 
-        const authenticationConfig = AuthenticationConfig.instance;
+        const resourceId = GlobalConfig.instance.apiAppId;
         const config = Helper.getAdalConfig(context);
 
         if (context) {
@@ -62,7 +67,7 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
 
         const authenticationContext = new AuthenticationContext(config);
 
-        authenticationContext.acquireToken(authenticationConfig.resourceId, async (error, token) => {
+        authenticationContext.acquireToken(resourceId, async (error, token) => {
             if (error || !token) {
                 this.setState({ userAuthenticationStatus: UserAuthenticationStatus.NotAuthenticated });
             } else {
@@ -101,10 +106,13 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
         this._tenantId = tenantId;
         this._accessToken = token;
         try {
-            const environmentConfig = await EnvironmentConfigProvider.instance.getById(this._tenantId);
+            const environmentConfig = await EnvironmentConfigProvider.instance.getByTenantId(this._tenantId);
 
             if (environmentConfig != null) {
-                this.setState({ userAuthenticationStatus: UserAuthenticationStatus.Authenticated });
+                this.setState({
+                    userAuthenticationStatus: UserAuthenticationStatus.Authenticated,
+                    environmentConfig: environmentConfig
+                });
             }
         } catch (error) {
             this.setState({ userAuthenticationStatus: UserAuthenticationStatus.AccessDenied });
@@ -160,6 +168,7 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                             .--efLms365Dashboard-spfx .k-toolbar .k-button { display: none !important; } /* Export To Excel button in Dashboard team view */
                             .pdfButtonContainer { display: none; } /* Export button in Transcript */
                             .ef--admin-center-link { display: none; } /* Admin Center button in Course Catalog */
+                            .ef-course-home-page-assignments .ef-course-home-page-menu { display: none; } /* Gradebook and Manage Assignments links */
                         `
                     }
                 </style>

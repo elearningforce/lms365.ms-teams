@@ -68,6 +68,7 @@ const server = http.createServer((request, response) => {
 
         <script>
             window.process = { env: { NODE_ENV: '${process.env.NODE_ENV}' } };
+            window['EF.LMS365.GlobalConfig.environmentType'] = ${process.env.environmentType};
         </script>
         <script src="/dist/client-vendors.packed.js"></script>
         <script src="/dist/client.packed.js"></script>

@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as microsoftTeams from '@microsoft/teams-js';
 import * as $ from 'jquery';
 import { Context, Input, Radiobutton, RadiobuttonGroup, ThemeStyle, Surface } from 'msteams-ui-components-react';
-import { View } from './view';
+import { View, ViewState } from './view';
 import { EnvironmentConfigProvider } from '../infrastructure/environment-config-provider';
 
 enum ViewType {
@@ -11,8 +11,7 @@ enum ViewType {
     Dashboard
 }
 
-export interface TabConfigurationState {
-    theme?: ThemeStyle;
+export interface TabConfigurationState extends ViewState {
     url?: string;
     viewType?: ViewType;
     name?: string;
@@ -222,7 +221,7 @@ export class TabConfigurationView extends View<any, TabConfigurationState> {
     }
 
     private async validateEntityExists(requestPath: string, validationMessage: string): Promise<boolean> {
-        const environmentConfig = await EnvironmentConfigProvider.instance.getById(this.tenantId);
+        const environmentConfig = await EnvironmentConfigProvider.instance.getByTenantId(this.tenantId);
         const requestUrl = environmentConfig.apiUrl + requestPath;
         return await $.ajax(
             {

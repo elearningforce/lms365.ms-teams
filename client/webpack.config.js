@@ -70,7 +70,8 @@ module.exports = function (environment) {
             new StatsPlugin('stats.json', {
                 chunkModules: true
             }),
-            new UglifyJsPlugin()
+            new UglifyJsPlugin(),
+            new ForkTsCheckerWebpackPlugin({ tsconfig: './tsconfig.json' })
         ],
         resolve: {
             extensions: ['.js', '.ts', '.tsx'],

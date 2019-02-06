@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as microsoftTeams from '@microsoft/teams-js';
-import { AuthenticationConfig } from 'ef.lms365';
+import { GlobalConfig } from 'ef.lms365';
 import { Helper } from '../infrastructure/helper';
 
 export class SignInView extends React.Component {
@@ -9,7 +9,7 @@ export class SignInView extends React.Component {
         microsoftTeams.getContext(context => {
             const config = Helper.getAdalConfig(context);
             const authenticationContext = new AuthenticationContext(config);
-            const authenticationConfig = AuthenticationConfig.instance;
+            const resourceId = GlobalConfig.instance.apiAppId;
 
             if (authenticationContext.isCallback(window.location.hash)) {
                 authenticationContext.handleWindowCallback();
@@ -21,7 +21,7 @@ export class SignInView extends React.Component {
                     authenticationContext.login();
                 }
                 else {
-                    authenticationContext.acquireToken(authenticationConfig.resourceId, (error, token) => {
+                    authenticationContext.acquireToken(resourceId, (error, token) => {
                         if (error || !token) {
                             if (error.indexOf('AADSTS50058') > -1) { //login_required
                                 authenticationContext.login();
