@@ -169,6 +169,7 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
                             .pdfButtonContainer { display: none; } /* Export button in Transcript */
                             .ef--admin-center-link { display: none; } /* Admin Center button in Course Catalog */
                             .ef-course-home-page-assignments .ef-course-home-page-menu { display: none; } /* Gradebook and Manage Assignments links */
+                            .ef-course-home-page-assignments .ef-grid-view[data-role="assignment-list"] .ef-data-grid-item[data-column-name="actions"] { display: none; } /* Actions column in Assignments part on Course Home Page for teacher */
                         `
                     }
                 </style>
