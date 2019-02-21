@@ -42,15 +42,10 @@ const server = http.createServer((request, response) => {
                 case 'training':
                     viewName = 'Training';
                     break;
+                default:
+                    viewName = null;
+                    break;
             }
-        }
-
-        if (!viewName && webUrl) {
-            viewName = 'Course';
-        }
-
-        if (webUrl) {
-
         }
 
         response.writeHead(200, { 'Content-Type': 'text/html' });
@@ -73,7 +68,7 @@ const server = http.createServer((request, response) => {
         <script src="/dist/client-vendors.packed.js"></script>
         <script src="/dist/client.packed.js"></script>
         <script>
-            this["ef.lms365.client"].render${viewName}View();
+            ${viewName && `this["ef.lms365.client"].render${viewName}View();`}
         </script>
     </body>
 </html>
