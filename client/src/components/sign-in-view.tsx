@@ -8,6 +8,8 @@ export class SignInView extends React.Component {
         microsoftTeams.initialize();
         microsoftTeams.getContext(context => {
             const config = Helper.getAdalConfig(context);
+            config.navigateToLoginRequestUrl = true;
+            
             const authenticationContext = new AuthenticationContext(config);
             const resourceId = GlobalConfig.instance.apiAppId;
 
