@@ -11,11 +11,17 @@ export class Helper {
                 'https://graph.microsoft.com': 'https://graph.microsoft.com',
                 [globalConfig.discoveryServerUrl]: globalConfig.apiAppId
             },
-            extraQueryParameter: '&login_hint=' + encodeURIComponent(context.upn),
+            extraQueryParameter: context != null ? '&login_hint=' + encodeURIComponent(context.upn) : null,
             instance: 'https://login.microsoftonline.com/',
             postLogoutRedirectUri: window.location.origin,
             redirectUri: window.location.origin + '/SignIn',
-            tenant: 'common'
+            tenant: 'common',
+            navigateToLoginRequestUrl: false
         };
+    }
+
+    public static handleAuthenticationCallback() {
+        const authenticationContext = new AuthenticationContext(this.getAdalConfig(null));
+        authenticationContext.handleWindowCallback();
     }
 }

@@ -4,6 +4,7 @@ import { SignInView } from './components/sign-in-view';
 import { TabConfigurationView } from './components/tab-configuration-view';
 import { WebPartView, WebPartType } from './components/web-part-view';
 import { TrainingView } from './components/training-view';
+import { Helper } from './infrastructure/helper';
 
 const container = document.getElementById('main');
 
@@ -38,4 +39,8 @@ export function renderDashboardView() {
 
 export function renderTrainingView() {
     ReactDom.render(<TrainingView />, container);
+}
+
+export function renderSignInCallbackView() {
+    Helper.handleAuthenticationCallback();
 }

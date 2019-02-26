@@ -48,11 +48,15 @@ const server = http.createServer((request, response) => {
             }
         }
 
+        if (viewName == null) {
+            viewName = 'SignInCallback';
+        }
+
         response.writeHead(200, { 'Content-Type': 'text/html' });
         response.write(`
 <html>
     <head>
-        <script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.16/js/adal.min.js"></script>
+        <script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.15/js/adal.min.js"></script>
     </head>
     <body>
         ${authorizationFrame}
