@@ -22,8 +22,6 @@ const server = http.createServer((request, response) => {
             response.end();
         });
     } else {
-        let adalScript = 'https://secure.aadcdn.microsoftonline-p.com/lib/1.0.16/js/adal.min.js';
-
         const webUrl = parsedUrl.query['webUrl'];
         let authorizationFrame = webUrl ? `<iframe src="${webUrl}" style="display: none"></iframe>` : '';
         let viewName = fileName;
@@ -52,14 +50,13 @@ const server = http.createServer((request, response) => {
 
         if (viewName == null) {
             viewName = 'SignInCallback';
-            adalScript = 'https://secure.aadcdn.microsoftonline-p.com/lib/1.0.15/js/adal.min.js';
         }
 
         response.writeHead(200, { 'Content-Type': 'text/html' });
         response.write(`
 <html>
     <head>
-        <script src="${adalScript}"></script>
+        <script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.17/js/adal.min.js"></script>
     </head>
     <body>
         ${authorizationFrame}
