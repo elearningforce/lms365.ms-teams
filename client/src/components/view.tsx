@@ -96,9 +96,9 @@ export class View<P = any, S extends ViewState = ViewState> extends React.Compon
             case 'dashboard':
                 return 'Dashboard';
             case 'course-catalog':
-                return 'CourseCatalog?webUrl=' + encodeURIComponent(webUrl);
+                return Helper.getCourseCatalogPageUrl(webUrl);
             case 'course':
-                return 'Course?webUrl=' + encodeURIComponent(webUrl);
+                return Helper.getCoursePageUrl(webUrl);
         }
     }
 

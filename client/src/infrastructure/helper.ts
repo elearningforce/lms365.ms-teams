@@ -24,4 +24,16 @@ export class Helper {
         const authenticationContext = new AuthenticationContext(this.getAdalConfig(null));
         authenticationContext.handleWindowCallback();
     }
+
+    public static getCoursePageUrl(url): string{
+        return 'Course?webUrl=' + encodeURIComponent(url);
+    }
+
+    public static getCourseCatalogPageUrl(url): string{
+        return 'CourseCatalog?webUrl=' + encodeURIComponent(url);
+    }
+
+    public static openCoursePage(url: string) {
+        document.location.href = Helper.getCoursePageUrl(url);
+    }
 }

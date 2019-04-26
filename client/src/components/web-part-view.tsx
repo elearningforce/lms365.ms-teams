@@ -3,6 +3,7 @@ import * as $ from 'jquery';
 import { Context } from 'msteams-ui-components-react';
 import { AppType, GlobalConfig } from 'ef.lms365';
 import { View } from './view';
+import { Helper } from '../infrastructure/helper';
 
 export enum WebPartType {
     Course,
@@ -65,7 +66,7 @@ export class WebPartView extends View<WebPartProps> {
             const href = $(this).attr('href');
 
             if ($(this).hasClass('ef--link-course')) {
-                document.location.href = 'Course?webUrl=' + encodeURIComponent(href);
+                Helper.openCoursePage(href);
             } else {
                 document.location.href = href;
             }
@@ -80,6 +81,10 @@ export class WebPartView extends View<WebPartProps> {
         $(document).on('click', 'a[href^="mailto:"]', function () {
             return false;
         });
+
+        window['ef.lms365.helpers'] = {
+            goToCoursePageHandler: Helper.openCoursePage,
+        }
     }
 
     public componentDidUpdate() {
